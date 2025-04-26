@@ -9,13 +9,32 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "*"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
+    "languages": [
+      {
+        "id": "chronolog",
+        "aliases": [
+          "ChronoLog",
+          "clog"
+        ],
+        "extensions": [
+          ".clog"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
     "commands": [
       {
         "command": "vscode-chronolog.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "chronolog.preview",
+        "title": "ChronoLog: Preview"
       }
     ]
   },
