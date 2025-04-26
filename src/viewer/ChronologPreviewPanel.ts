@@ -9,9 +9,10 @@ import { ChronologParser } from "../parser/ChronologParser";
 export class ChronologPreviewPanel {
   public static currentPanel: ChronologPreviewPanel | undefined;
   private readonly _panel: vscode.WebviewPanel;
+  // @ts-ignore: _extensionUriは将来的に使用する可能性があるため残しています
   private readonly _extensionUri: vscode.Uri;
   private _disposables: vscode.Disposable[] = [];
-  private _document?: vscode.TextDocument;
+  private _document: vscode.TextDocument | undefined;
 
   public static createOrShow(extensionUri: vscode.Uri, document?: vscode.TextDocument) {
     const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
@@ -52,7 +53,7 @@ export class ChronologPreviewPanel {
 
     // パネルが表示されたときに更新
     this._panel.onDidChangeViewState(
-      (e) => {
+      (_e) => {
         if (this._panel.visible) {
           this._update();
         }
@@ -81,15 +82,14 @@ export class ChronologPreviewPanel {
   }
 
   private _update() {
-    const webview = this._panel.webview;
     this._panel.title = this._document
       ? `Chronolog Preview: ${path.basename(this._document.fileName)}`
       : "Chronolog Preview";
 
-    this._panel.webview.html = this._getHtmlForWebview(webview);
+    this._panel.webview.html = this._getHtmlForWebview();
   }
 
-  private _getHtmlForWebview(webview: vscode.Webview) {
+  private _getHtmlForWebview() {
     let html = `<!DOCTYPE html>
 <html lang="en">
 <head>

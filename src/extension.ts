@@ -12,7 +12,7 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.languages.registerDocumentSemanticTokensProvider(
     { language: "chronolog", scheme: "file" },
     new (class implements vscode.DocumentSemanticTokensProvider {
-      async provideDocumentSemanticTokens(document: vscode.TextDocument): Promise<vscode.SemanticTokens> {
+      async provideDocumentSemanticTokens(_document: vscode.TextDocument): Promise<vscode.SemanticTokens> {
         // 将来的にはきちんとしたトークン解析を実装する
         return new vscode.SemanticTokens(new Uint32Array(0));
       }

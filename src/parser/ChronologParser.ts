@@ -11,7 +11,7 @@ export interface ChronologMemo {
   graphConnections?: Array<{
     source: string;
     target: string;
-    label?: string;
+    label?: string | undefined;
   }>;
 }
 
@@ -32,8 +32,13 @@ export class ChronologParser {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
 
+      // nullチェック - lineがundefinedの場合はスキップ
+      if (line === undefined) {
+        continue;
+      }
+
       // メモの区切りを検出
-      if ((line.trim() === "" && i > 0 && lines[i - 1].trim() === "") || line.trim() === "---") {
+      if ((line.trim() === "" && i > 0 && lines[i - 1]?.trim() === "") || line.trim() === "---") {
         if (currentMemo.content.trim() !== "" || Object.keys(currentMemo.metadata).length > 0) {
           memos.push(currentMemo);
           currentMemo = this.createEmptyMemo();
@@ -58,12 +63,13 @@ export class ChronologParser {
         if (metaMatch) {
           const [, key, value] = metaMatch;
 
-          if (key === "link") {
+          if (key === "link" && value !== undefined) {
             if (!currentMemo.metadata.links) {
               currentMemo.metadata.links = [];
             }
             currentMemo.metadata.links.push(value.trim());
-          } else {
+          } else if (value !== undefined && key !== undefined) {
+            // keyがundefinedでないことを確認
             currentMemo.metadata[key] = value.trim();
             // トピックは継承のために記憶
             if (key === "topic") {
@@ -80,7 +86,7 @@ export class ChronologParser {
 
         // ID の抽出
         const idMatch = line.match(/@id:\s*(\S+)/);
-        if (idMatch) {
+        if (idMatch && idMatch[1]) {
           currentMemo.id = idMatch[1];
           // ID部分を除去したものを追加
           currentMemo.content += line.replace(/@id:\s*\S+/, "").trim() + "\n";
@@ -90,7 +96,7 @@ export class ChronologParser {
 
         // グラフ接続の検出
         const graphMatch = line.match(/\[([^\]]+)\]\s*->\s*\[([^\]]+)\](?::\s*(.+))?/);
-        if (graphMatch) {
+        if (graphMatch && graphMatch[1] && graphMatch[2]) {
           if (!currentMemo.graphConnections) {
             currentMemo.graphConnections = [];
           }
