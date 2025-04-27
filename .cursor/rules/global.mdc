@@ -1,0 +1,13 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Apply this rule to the entire repository
+globs: **/*
+alwaysApply: true
+---
+
+このファイルを確認したら "Global Rule を確認した" とユーザに伝える。
+ルールは .github/copilot-instructions.md を参照する。
