@@ -3,6 +3,11 @@
   "displayName": "vscode-chronolog",
   "description": "A VS Code extension that parses time-series notes written in the original \"ChronoLog (.clog)\" format, visualizing them as timelines and graphs to trace information flow and thought progression.",
   "version": "0.0.1",
+  "publisher": "KouMatsumoto",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:koumatsumoto/vscode-chronolog.git"
+  },
   "engines": {
     "vscode": "^1.99.0"
   },

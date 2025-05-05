@@ -1,71 +1,104 @@
-# vscode-chronolog README
+# VS Code ChronoLog
 
-This is the README for your extension "vscode-chronolog". After writing up a brief description, we recommend including the following sections.
+VS Code ChronoLog は、独自形式「ChronoLog (`.clog`)」で記述された時系列メモを VS Code 上で効率的に扱い、その内容をタイムラインとグラフで可視化する拡張機能です。
 
-## Features
+## 概要
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **名称:** VS Code ChronoLog
+- **目的:** `.clog` ファイルで時系列メモを管理し、タイムライン・グラフで可視化
+- **ターゲットユーザー:** 調査記録、研究ノート、プロジェクトログ、思考メモなどを時系列で管理したい VS Code ユーザー
+- **開発言語:** TypeScript
 
-For example if there is an image subfolder under your extension project workspace:
+## ChronoLog (`.clog`) ファイル形式
 
-\!\[feature X\]\(images/feature-x.png\)
+- 拡張子: `.clog`
+- UTF-8 テキスト
+- メモ区切り: 空行または `---`
+- メタデータ: `@topic`, `@time`, `@link`, `@tags` など
+- 内容: メタデータ以降のテキスト
+- グラフ構造: `[ノードA] -> [ノードB]: ラベル` 形式で記述
+- コメント: `#` で始まる行
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+### サンプル
 
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-- `myExtension.enable`: Enable/disable this extension.
-- `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+```text
+@topic: プロジェクトX 初期調査
+@time: 2025-04-20 10:00:00
+最初の要求仕様を確認。 @id: req-check
 
 ---
 
-## Following extension guidelines
+@topic: プロジェクトX 初期調査
+@time: 2025-04-22 14:30:00
+不明点について担当者に質問メール送信。 @id: question-sent
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+[req-check] -> [question-sent]: 不明点解消のため
+```
 
-- [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+## 主な機能
 
-## Working with Markdown
+- `.clog` ファイルのシンタックスハイライト
+- コマンドパレットまたはエディタ右上アイコンから ChronoLog プレビューを開閉
+- タイムライン表示（最新が上、古いものが下）
+- メモ間の関係性をグラフで可視化
+- プレビュー内でリンククリック、ノード詳細表示
+- ファイル保存時のプレビュー自動更新
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+## 開発手順
 
-- Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-- Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-- Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+### セットアップ
 
-## For more information
+1. 必要なパッケージをインストール:
 
-- [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-- [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+   ```bash
+   npm install
+   ```
 
-**Enjoy!**
+2. VS Code の推奨拡張機能をインストール:
+
+   - ESLint
+   - Extension Test Runner
+   - TSLint Problem Matcher
+
+### コードフォーマット
+
+以下コマンドで Prettier によるフォーマット:
+
+```bash
+npm run fmt
+```
+
+## 要件
+
+- Visual Studio Code
+- Node.js
+- 上記の推奨拡張機能
+
+## Extension Settings
+
+<!-- 設定項目があればここに記載。現時点で未記載。 -->
+
+## Known Issues
+
+<!-- 既知の問題があればここに記載。現時点で未記載。 -->
+
+## Release Notes
+
+<!-- リリースノートをここに記載。 -->
+
+---
+
+## 開発ロードマップ（抜粋）
+
+- パーサー実装
+- Webview プレビュー
+- タイムライン・グラフ UI
+- シンタックスハイライト
+- ファイル変更検知
+- インタラクション強化
+- フィルタリング・検索・設定画面
+- テスト・ドキュメント作成
+
+## ライセンス
+
+<!-- ライセンス情報をここに記載。 -->
