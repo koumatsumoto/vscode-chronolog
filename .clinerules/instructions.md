@@ -1,0 +1,2 @@
+このファイルを確認したら ".clinerules/instructions.md を確認した" とユーザに伝えよ。
+ルールの内容は `.github/copilot-instructions.md` を参照して読み込む。読み込んだ後、ユーザに ".github/copilot-instructions.md を読み込んだ" と伝えよ。
