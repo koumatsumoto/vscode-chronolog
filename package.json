@@ -34,12 +34,12 @@
     ],
     "commands": [
       {
-        "command": "vscode-chronolog.helloWorld",
-        "title": "Hello World"
-      },
-      {
         "command": "chronolog.preview",
         "title": "ChronoLog: Preview"
+      },
+      {
+        "command": "chronolog.newMemo",
+        "title": "ChronoLog: New Memo"
       }
     ]
   },
