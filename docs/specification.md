@@ -9,6 +9,15 @@
   - 特に、開発メモ、調査記録、研究ノート、プロジェクトログ、思考メモなどを、VS Code を使用しているプロジェクト内で直接、時系列に記録・管理したいユーザー。(`.clog` フォルダにファイルとしてメモが蓄積されるため、プロジェクト管理と親和性が高い)
 - **開発言語:** TypeScript
 
+## TypeScript 設定
+
+- `tsconfig.json` で strict モードおよび厳格な型チェックオプションを有効化
+  - `"strict": true`, `"noImplicitAny": true`, `"noUnusedLocals": true` など
+- `"include": ["src"]` により、`src/` 配下のみを型チェック対象とする
+- JavaScript ファイルも `"checkJs": true` で型チェック対象
+- `"noEmit": true` でビルド時のファイル出力を禁止
+- その他、詳細は `tsconfig.json` を参照
+
 ## 2. 機能仕様 (初期リリース範囲)
 
 ### 2.1. ワークスペース初期化機能

@@ -1,4 +1,5 @@
 {
+  "include": ["src"],
   "compilerOptions": {
     "module": "Node16",
     "target": "ES2022",
@@ -18,8 +19,11 @@
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "noImplicitAny": true,
     "noImplicitThis": true,
     "useUnknownInCatchVariables": true,
+    "checkJs": true,
+    "resolveJsonModule": true,
 
     /* Module Resolution Options */
     "isolatedModules": true,
@@ -27,7 +31,6 @@
 
     /* Emit Options */
     "useDefineForClassFields": true,
-    "noEmitOnError": true,
 
     /* Additional Checks */
     "esModuleInterop": true,
