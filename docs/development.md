@@ -4,3 +4,13 @@
 - UIのstyleや見た目に関するアサーションを vscode-test に追加しない。
 - UI仕様は必ず仕様書・設計方針に従い、テスト駆動でUIを作り込まないこと。
 - 本ルールは今後の全ての開発で厳守し、必ずこのドキュメントを参照すること。
+
+---
+
+## リリース時のバージョンアップ・タグ付け手順
+
+リリース時には以下コマンドでversionを上げてタグ付けすること
+
+```sh
+npm version [patch|minor|major] -m "chore(release): publish version %s"
+```
