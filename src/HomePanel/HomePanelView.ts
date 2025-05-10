@@ -15,12 +15,69 @@ export class HomePanelView {
         <style>
           body { font-family: sans-serif; margin: 0; padding: 0; height: 100vh; box-sizing: border-box; background: var(--vscode-editor-background); color: var(--vscode-editor-foreground); }
           .container { display: flex; flex-direction: column; height: 100vh; }
-          .input-area { flex: 0 0 50%; padding: 20px; background: var(--vscode-panel-background); box-shadow: 0 2px 4px var(--vscode-widget-shadow, #0001); z-index: 1; }
-          .memo-list-area { flex: 1 1 50%; overflow-y: auto; padding: 16px 20px 20px 20px; background: var(--vscode-editor-background); }
-          textarea { width: 100%; height: 120px; font-size: 1em; }
-          button { margin-top: 10px; font-size: 1em; }
-          .memo-card {
+          .input-area {
+            flex: 0 0 50%;
+            padding: 20px;
             background: var(--vscode-panel-background);
+            box-shadow: 0 2px 4px var(--vscode-widget-shadow, #0001);
+            z-index: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 50vh;
+            min-height: 240px;
+          }
+          .memo-list-area {
+            flex: 1 1 50%;
+            overflow-y: auto;
+            padding: 16px 20px 20px 20px;
+            background: var(--vscode-editor-background);
+          }
+          textarea {
+            width: 100%;
+            height: calc(100% - 32px);
+            min-height: 120px;
+            max-height: 100%;
+            font-size: 1em;
+            resize: none;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid var(--vscode-panel-border, #444);
+            padding: 12px;
+            background: color-mix(in srgb, var(--vscode-panel-background) 85%, #fff 15%);
+            /* fallback for color-mix */
+            /* background: rgba(255,255,255,0.07); */
+            color: var(--vscode-editor-foreground);
+            transition: background 0.2s;
+          }
+          @media (prefers-color-scheme: dark) {
+            textarea {
+              background: color-mix(in srgb, var(--vscode-panel-background) 70%, #fff 30%);
+              /* fallback: background: #23272e; */
+            }
+          }
+          .save-btn-float {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            font-size: 1em;
+            padding: 8px 20px;
+            border-radius: 6px;
+            background: var(--vscode-button-background, #007acc);
+            color: var(--vscode-button-foreground, #fff);
+            border: none;
+            box-shadow: 0 2px 8px var(--vscode-widget-shadow, #0002);
+            cursor: pointer;
+            transition: background 0.2s;
+          }
+          .save-btn-float:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+          .memo-card {
+            background: color-mix(in srgb, var(--vscode-panel-background) 90%, #fff 10%);
+            /* fallback: background: #23272e; */
             box-shadow: 0 2px 8px var(--vscode-widget-shadow, #0002);
             border-radius: 8px;
             margin-bottom: 16px;
@@ -31,18 +88,48 @@ export class HomePanelView {
             flex-direction: column;
             justify-content: center;
             overflow: hidden;
+            transition: background 0.2s;
           }
-          .memo-date { font-size: 0.9em; color: var(--vscode-descriptionForeground, #888); margin-bottom: 2px; }
-          .memo-title { font-weight: bold; font-size: 1.05em; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-          .memo-body { font-size: 1em; color: var(--vscode-editor-foreground, #333); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
-          .memo-list-empty { color: var(--vscode-descriptionForeground, #aaa); text-align: center; margin-top: 32px; }
+          @media (prefers-color-scheme: dark) {
+            .memo-card {
+              background: color-mix(in srgb, var(--vscode-panel-background) 80%, #fff 20%);
+            }
+          }
+          .memo-date {
+            font-size: 0.9em;
+            color: var(--vscode-descriptionForeground, #888);
+            margin-bottom: 2px;
+          }
+          .memo-title {
+            font-weight: bold;
+            font-size: 1.05em;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .memo-body {
+            font-size: 1em;
+            color: color-mix(in srgb, var(--vscode-editor-foreground) 70%, #000 30%);
+            /* fallback: color: #aaa; */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .memo-list-empty {
+            color: var(--vscode-descriptionForeground, #aaa);
+            text-align: center;
+            margin-top: 32px;
+          }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="input-area">
-            <textarea id="memoInput" placeholder="メモ内容を入力..."></textarea><br>
-            <button id="submitBtn" disabled>保存</button>
+            <textarea id="memoInput" placeholder="メモ内容を入力..."></textarea>
+            <button id="submitBtn" class="save-btn-float" disabled>保存</button>
           </div>
           <div class="memo-list-area" id="memoListArea">
             <div class="memo-list-empty" id="memoListEmpty">過去のメモはありません</div>
