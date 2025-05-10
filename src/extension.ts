@@ -48,11 +48,11 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  // Chronolog: 新規メモ入力コマンド
-  const newMemoCommand = vscode.commands.registerCommand("chronolog.newMemo", () => {
+  // Chronolog: ホームパネル表示コマンド
+  const openHomeCommand = vscode.commands.registerCommand("chronolog.openHome", () => {
     ChronologHomePanel.createOrShow(context.extensionUri);
   });
-  context.subscriptions.push(newMemoCommand);
+  context.subscriptions.push(openHomeCommand);
 }
 
 // This method is called when your extension is deactivated

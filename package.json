@@ -34,8 +34,8 @@
     ],
     "commands": [
       {
-        "command": "chronolog.newMemo",
-        "title": "ChronoLog: New Memo"
+        "command": "chronolog.openHome",
+        "title": "Chronolog: Open Home"
       }
     ]
   },
