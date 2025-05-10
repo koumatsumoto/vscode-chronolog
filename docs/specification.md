@@ -79,3 +79,19 @@ HomePanel の実装は以下の3ファイルに分割されている。
 - 本プロジェクト内で「Chronolog」を指す場合は、必ず "Chronolog" と表記すること。
 - "ChronoLog" や "ChronoLOG" など、他の大文字・小文字混在表記は禁止する。
 - コード、ドキュメント、UI、コメント、設定ファイル等すべてにおいてこのルールを厳守すること。
+
+---
+
+## 5. Activation Events（拡張機能の有効化トリガー）
+
+- `activationEvents` は以下の2つを設定する。
+
+```json
+"activationEvents": [
+  "onCommand:chronolog.openHome",
+  "onLanguage:chronolog"
+]
+```
+
+- コマンド実行時、または `.clog` ファイルを開いたときのみ拡張機能が有効化される。
+- 必要に応じて今後追加するコマンドやイベントに合わせて拡張する。
