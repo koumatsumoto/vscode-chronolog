@@ -14,3 +14,12 @@
 ```sh
 npm version [patch|minor|major] -m "chore(release): publish version %s"
 ```
+
+---
+
+## GitHub ActionsによるCI/CD自動化
+
+- すべてのコミット・タグpush時にGitHub ActionsでCI（`npm run ci`）を実行する。
+- タグ（`vX.X.X`形式）push時、CIが成功した場合のみ自動で `vsce publish` によるリリースを行う。
+  - リリースにはGitHub Secretsの `VSCE_PAT` が必要。
+- ワークフローファイルは `.github/workflows/cicd.yml` に定義。
