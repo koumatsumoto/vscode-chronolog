@@ -40,6 +40,21 @@
 - **データソース:** .clog/memo フォルダ配下の .clog ファイル群
 - **備考:** ファイル名・クラス名は ChronologHomePanel に変更
 
+#### 2.2.1. 実装構成（ファイル分割）
+
+ChronologHomePanel の実装は以下の3ファイルに分割されている。
+
+- `ChronologHomePanel.ts`  
+  WebViewパネルの管理・コントローラー（UIイベントの受信、Service/View呼び出し）
+
+- `ChronologHomePanelService.ts`  
+  ビジネスロジック（メモの保存・一覧取得などのファイル操作や処理）
+
+- `ChronologHomePanelView.ts`  
+  HTML生成（入力パラメータからWebView用HTMLを組み立てて返す）
+
+この分割により、UI制御・ロジック・ビューの責務を明確化している。
+
 ### 2.3. ファイル保存処理
 
 - **トリガー:** ユーザーが UI 上の送信ボタンをクリックし、かつテキスト入力エリアに1文字以上の入力がある場合。

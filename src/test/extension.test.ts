@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 
-import { ChronologHomePanel } from "../panel/ChronologHomePanel";
+import { ChronologHomePanel } from "../ChronologHomePanel/ChronologHomePanel";
 
 suite("Chronolog Extension Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.");
