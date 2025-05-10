@@ -1,9 +1,8 @@
-// ChronologHomePanelService.ts
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 
-export class ChronologHomePanelService {
+export class HomePanelService {
   /**
    * メモを保存
    * @param text メモ内容

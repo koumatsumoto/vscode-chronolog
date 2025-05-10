@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { ChronologHomePanel } from "./ChronologHomePanel/ChronologHomePanel";
+import { HomePanel } from "./HomePanel/HomePanel";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -50,7 +50,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Chronolog: ホームパネル表示コマンド
   const openHomeCommand = vscode.commands.registerCommand("chronolog.openHome", () => {
-    ChronologHomePanel.createOrShow(context.extensionUri);
+    HomePanel.createOrShow(context.extensionUri);
   });
   context.subscriptions.push(openHomeCommand);
 }

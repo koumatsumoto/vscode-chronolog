@@ -3,13 +3,13 @@ import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 
-import { ChronologHomePanel } from "../ChronologHomePanel/ChronologHomePanel";
+import { HomePanel } from "../HomePanel/HomePanel";
 
 suite("Chronolog Extension Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.");
 
-  test("ChronologHomePanel class should be defined", () => {
-    assert.ok(ChronologHomePanel, "ChronologHomePanel is not defined");
+  test("HomePanel class should be defined", () => {
+    assert.ok(HomePanel, "HomePanel is not defined");
   });
 
   test(".clog/memo directory should exist in workspace root", async function () {

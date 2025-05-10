@@ -1,14 +1,13 @@
-// ChronologHomePanel.ts
 import * as vscode from "vscode";
-import { ChronologHomePanelView } from "./ChronologHomePanelView";
-import { ChronologHomePanelService } from "./ChronologHomePanelService";
+import { HomePanelView } from "./HomePanelView";
+import { HomePanelService } from "./HomePanelService";
 
 /**
- * Chronolog メモ入力用Webviewパネル（ChronologHomePanel）
+ * メモ入力用Webviewパネル（HomePanel）
  * Controller: WebView管理
  */
-export class ChronologHomePanel {
-  public static currentPanel: ChronologHomePanel | undefined;
+export class HomePanel {
+  public static currentPanel: HomePanel | undefined;
   private readonly _panel: vscode.WebviewPanel;
   // @ts-ignore: _extensionUriは将来的に使用する可能性があるため残しています
   private readonly _extensionUri: vscode.Uri;
@@ -18,8 +17,8 @@ export class ChronologHomePanel {
     const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
 
     // 既存パネルがあれば再利用
-    if (ChronologHomePanel.currentPanel) {
-      ChronologHomePanel.currentPanel._panel.reveal(column);
+    if (HomePanel.currentPanel) {
+      HomePanel.currentPanel._panel.reveal(column);
       return;
     }
 
@@ -28,7 +27,7 @@ export class ChronologHomePanel {
       enableScripts: true,
     });
 
-    ChronologHomePanel.currentPanel = new ChronologHomePanel(panel, extensionUri);
+    HomePanel.currentPanel = new HomePanel(panel, extensionUri);
   }
 
   private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
@@ -55,7 +54,7 @@ export class ChronologHomePanel {
             {
               const text: string = message.text;
               try {
-                const fileName = ChronologHomePanelService.saveMemo(text);
+                const fileName = HomePanelService.saveMemo(text);
                 vscode.window.showInformationMessage(`メモを保存しました: ${fileName}`);
                 this._panel.dispose();
               } catch (err) {
@@ -74,17 +73,17 @@ export class ChronologHomePanel {
    * .clog/memo配下のメモファイル一覧を取得しWebviewに送信
    */
   private _sendMemoListToWebview() {
-    const memoList = ChronologHomePanelService.getMemoList();
+    const memoList = HomePanelService.getMemoList();
     this._panel.webview.postMessage({ command: "memoList", data: memoList });
   }
 
   private _update() {
     this._panel.title = "Chronolog Home";
-    this._panel.webview.html = ChronologHomePanelView.getHtml();
+    this._panel.webview.html = HomePanelView.getHtml();
   }
 
   public dispose() {
-    ChronologHomePanel.currentPanel = undefined;
+    HomePanel.currentPanel = undefined;
     this._panel.dispose();
     while (this._disposables.length) {
       const x = this._disposables.pop();

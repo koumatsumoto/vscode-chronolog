@@ -30,7 +30,7 @@
   4.  `memo` サブフォルダが存在しない場合、`.clog/memo/` パスに新規に作成する。
 - **将来的な拡張:** 設定ファイルの格納など、`.clog` フォルダの役割を拡張する予定。
 
-### 2.2. ChronologHomePanel（メモ入力・保存＋過去メモ一覧 UI）
+### 2.2. HomePanel（メモ入力・保存＋過去メモ一覧 UI）
 
 - **UI形式:** VS Code のメインエディタ領域に表示される専用タブ（Webview を利用したカスタムUI）。
 - **主要コンポーネント:**
@@ -38,19 +38,19 @@
   - **保存ボタン (`button`):** テキスト入力エリア直下に配置。1文字以上入力時のみ活性化。
   - **過去のメモ一覧:** 画面下部50%に表示。.clog/memo フォルダ内のファイルを新しい順で最大10件、カード形式（shadow付き、幅100%、高さ固定、3行程度で省略表示）で一覧表示。各カードには1行目:日時、2行目:タイトル、3行目:本文（長文は...で省略）が表示される。スクロール可能。
 - **データソース:** .clog/memo フォルダ配下の .clog ファイル群
-- **備考:** ファイル名・クラス名は ChronologHomePanel に変更
+- **備考:** ファイル名・クラス名は HomePanel に変更
 
 #### 2.2.1. 実装構成（ファイル分割）
 
-ChronologHomePanel の実装は以下の3ファイルに分割されている。
+HomePanel の実装は以下の3ファイルに分割されている。
 
-- `ChronologHomePanel.ts`  
+- `HomePanel.ts`  
   WebViewパネルの管理・コントローラー（UIイベントの受信、Service/View呼び出し）
 
-- `ChronologHomePanelService.ts`  
+- `HomePanelService.ts`  
   ビジネスロジック（メモの保存・一覧取得などのファイル操作や処理）
 
-- `ChronologHomePanelView.ts`  
+- `HomePanelView.ts`  
   HTML生成（入力パラメータからWebView用HTMLを組み立てて返す）
 
 この分割により、UI制御・ロジック・ビューの責務を明確化している。

@@ -1,5 +1,4 @@
-// ChronologHomePanelView.ts
-export class ChronologHomePanelView {
+export class HomePanelView {
   /**
    * HTML生成
    * @param params 任意のパラメータ（将来拡張用）
