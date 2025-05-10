@@ -14,10 +14,6 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:chronolog.openHome",
-    "onLanguage:chronolog"
-  ],
   "main": "./dist/extension.js",
   "contributes": {
     "languages": [
