@@ -13,15 +13,15 @@ export class HomePanelView {
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <title>Chronolog Home</title>
         <style>
-          body { font-family: sans-serif; margin: 0; padding: 0; height: 100vh; box-sizing: border-box; background: #f8f8fa; }
+          body { font-family: sans-serif; margin: 0; padding: 0; height: 100vh; box-sizing: border-box; background: var(--vscode-editor-background); color: var(--vscode-editor-foreground); }
           .container { display: flex; flex-direction: column; height: 100vh; }
-          .input-area { flex: 0 0 50%; padding: 20px; background: #fff; box-shadow: 0 2px 4px #0001; z-index: 1; }
-          .memo-list-area { flex: 1 1 50%; overflow-y: auto; padding: 16px 20px 20px 20px; background: #f4f6fa; }
+          .input-area { flex: 0 0 50%; padding: 20px; background: var(--vscode-panel-background); box-shadow: 0 2px 4px var(--vscode-widget-shadow, #0001); z-index: 1; }
+          .memo-list-area { flex: 1 1 50%; overflow-y: auto; padding: 16px 20px 20px 20px; background: var(--vscode-editor-background); }
           textarea { width: 100%; height: 120px; font-size: 1em; }
           button { margin-top: 10px; font-size: 1em; }
           .memo-card {
-            background: #fff;
-            box-shadow: 0 2px 8px #0002;
+            background: var(--vscode-panel-background);
+            box-shadow: 0 2px 8px var(--vscode-widget-shadow, #0002);
             border-radius: 8px;
             margin-bottom: 16px;
             padding: 12px 16px;
@@ -32,10 +32,10 @@ export class HomePanelView {
             justify-content: center;
             overflow: hidden;
           }
-          .memo-date { font-size: 0.9em; color: #888; margin-bottom: 2px; }
+          .memo-date { font-size: 0.9em; color: var(--vscode-descriptionForeground, #888); margin-bottom: 2px; }
           .memo-title { font-weight: bold; font-size: 1.05em; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-          .memo-body { font-size: 1em; color: #333; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
-          .memo-list-empty { color: #aaa; text-align: center; margin-top: 32px; }
+          .memo-body { font-size: 1em; color: var(--vscode-editor-foreground, #333); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
+          .memo-list-empty { color: var(--vscode-descriptionForeground, #aaa); text-align: center; margin-top: 32px; }
         </style>
       </head>
       <body>

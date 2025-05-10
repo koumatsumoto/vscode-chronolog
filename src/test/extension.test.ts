@@ -5,6 +5,7 @@ import * as vscode from "vscode";
 
 import { HomePanel } from "../HomePanel/HomePanel";
 import { HomePanelService } from "../HomePanel/HomePanelService";
+import { HomePanelView } from "../HomePanel/HomePanelView";
 
 suite("Chronolog Extension Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.");
@@ -63,5 +64,15 @@ suite("Chronolog Extension Test Suite", () => {
     const readContent = fs.readFileSync(testFile, { encoding: "utf8" });
     assert.strictEqual(readContent, testContent, "Memo file content mismatch");
     fs.unlinkSync(testFile);
+  });
+
+  // HomePanelView の Webview テーマ対応テスト
+  test("HomePanelView.getHtml() should use VSCode theme CSS variables", () => {
+    const html = HomePanelView.getHtml();
+    assert.match(html, /--vscode-editor-background/);
+    assert.match(html, /--vscode-panel-background/);
+    assert.match(html, /--vscode-editor-foreground/);
+    assert.doesNotMatch(html, /background:\s*#fff/);
+    assert.doesNotMatch(html, /background:\s*#f8f8fa/);
   });
 });
