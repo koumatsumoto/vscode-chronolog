@@ -22,7 +22,7 @@ export class ChronologHomePanel {
     }
 
     // 新規パネル作成
-    const panel = vscode.window.createWebviewPanel("chronologMemo", "Chronolog Memo", column || vscode.ViewColumn.One, {
+    const panel = vscode.window.createWebviewPanel("chronologHome", "Chronolog Home", column || vscode.ViewColumn.One, {
       enableScripts: true,
     });
 
@@ -154,7 +154,7 @@ export class ChronologHomePanel {
   }
 
   private _update() {
-    this._panel.title = "Chronolog Memo";
+    this._panel.title = "Chronolog Home";
     this._panel.webview.html = this._getHtmlForWebview();
   }
 

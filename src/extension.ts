@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { ChronologPreviewPanel } from "./panel/ChronologPreviewPanel";
-import { ChronologMemoPanel } from "./panel/ChronologMemoPanel";
+import { ChronologHomePanel } from "./panel/ChronologHomePanel";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -73,7 +73,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Chronolog: 新規メモ入力コマンド
   const newMemoCommand = vscode.commands.registerCommand("chronolog.newMemo", () => {
-    ChronologMemoPanel.createOrShow(context.extensionUri);
+    ChronologHomePanel.createOrShow(context.extensionUri);
   });
   context.subscriptions.push(newMemoCommand);
 }
