@@ -1,7 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { ChronologPreviewPanel } from "./panel/ChronologPreviewPanel";
 import { ChronologHomePanel } from "./panel/ChronologHomePanel";
 import * as fs from "fs";
 import * as path from "path";
@@ -48,28 +47,6 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.languages.setTextDocumentLanguage(document, "chronolog");
     }
   });
-
-  // プレビューコマンドの登録
-  const previewCommand = vscode.commands.registerCommand("chronolog.preview", () => {
-    const activeEditor = vscode.window.activeTextEditor;
-
-    if (activeEditor && activeEditor.document.fileName.endsWith(".clog")) {
-      ChronologPreviewPanel.createOrShow(context.extensionUri, activeEditor.document);
-    } else {
-      vscode.window.showInformationMessage(
-        "Chronolog: アクティブな .clog ファイルをプレビューするには、.clog ファイルを開いてください。",
-      );
-    }
-  });
-
-  // ファイル保存時の処理 (プレビューの更新)
-  vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
-    if (document.fileName.endsWith(".clog") && ChronologPreviewPanel.currentPanel) {
-      ChronologPreviewPanel.currentPanel.update(document);
-    }
-  });
-
-  context.subscriptions.push(previewCommand);
 
   // Chronolog: 新規メモ入力コマンド
   const newMemoCommand = vscode.commands.registerCommand("chronolog.newMemo", () => {
