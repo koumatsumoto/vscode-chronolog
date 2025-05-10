@@ -4,12 +4,36 @@ import * as path from "path";
 import * as vscode from "vscode";
 
 import { HomePanel } from "../HomePanel/HomePanel";
+import { HomePanelService } from "../HomePanel/HomePanelService";
 
 suite("Chronolog Extension Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.");
 
   test("HomePanel class should be defined", () => {
     assert.ok(HomePanel, "HomePanel is not defined");
+  });
+
+  // 追加: HomePanelService.saveMemo→getMemoListの即時反映テスト
+  test("HomePanelService.saveMemo should immediately reflect in getMemoList", async function () {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    const [firstWorkspace] = workspaceFolders ?? [];
+    if (!firstWorkspace) {
+      this.skip();
+    }
+    const rootPath = firstWorkspace.uri.fsPath;
+    const memoDir = path.join(rootPath, ".clog", "memo");
+    const testContent = "Chronolog integration test memo";
+    // 保存
+    const fileName = HomePanelService.saveMemo(testContent);
+    // 取得
+    const memoList = HomePanelService.getMemoList();
+    const found = memoList.some((memo) => memo.fileName === fileName && memo.content === testContent);
+    assert.ok(found, "Saved memo was not found in getMemoList immediately");
+    // 後始末
+    const testFile = path.join(memoDir, fileName);
+    if (fs.existsSync(testFile)) {
+      fs.unlinkSync(testFile);
+    }
   });
 
   test(".clog/memo directory should exist in workspace root", async function () {

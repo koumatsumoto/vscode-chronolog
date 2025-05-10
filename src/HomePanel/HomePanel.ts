@@ -56,7 +56,10 @@ export class HomePanel {
               try {
                 const fileName = HomePanelService.saveMemo(text);
                 vscode.window.showInformationMessage(`メモを保存しました: ${fileName}`);
-                this._panel.dispose();
+                // パネルは閉じず、メモリストを再送信
+                this._sendMemoListToWebview();
+                // 入力欄クリア指示
+                this._panel.webview.postMessage({ command: "clearMemoInput" });
               } catch (err) {
                 vscode.window.showErrorMessage("メモの保存に失敗しました: " + err);
               }

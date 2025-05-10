@@ -78,6 +78,10 @@ export class HomePanelView {
               console.log("[Webview] received memoList", msg.data);
               renderMemoList(msg.data);
             }
+            if (msg.command === 'clearMemoInput') {
+              textarea.value = '';
+              button.disabled = true;
+            }
           });
 
           function renderMemoList(memos) {
