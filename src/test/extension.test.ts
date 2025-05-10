@@ -25,10 +25,10 @@ suite("Chronolog Extension Test Suite", () => {
     const memoDir = path.join(rootPath, ".clog", "memo");
     const testContent = "Chronolog integration test memo";
     // 保存
-    const fileName = HomePanelService.saveMemo(testContent);
+    const fileName = await HomePanelService.saveMemo(testContent);
     // 取得
-    const memoList = HomePanelService.getMemoList();
-    const found = memoList.some((memo) => memo.fileName === fileName && memo.content === testContent);
+    const memoList = await HomePanelService.getMemoList();
+    const found = memoList.some((memo: any) => memo.fileName === fileName && typeof memo.summary === "string");
     assert.ok(found, "Saved memo was not found in getMemoList immediately");
     // 後始末
     const testFile = path.join(memoDir, fileName);

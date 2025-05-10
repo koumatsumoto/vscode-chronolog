@@ -68,5 +68,12 @@
   },
   "prettier": {
     "printWidth": 120
+  },
+  "dependencies": {
+    "remark": "^15.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.5",
+    "yaml": "^2.7.1"
   }
 }

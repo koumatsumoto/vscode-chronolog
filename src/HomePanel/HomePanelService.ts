@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
+import { ClogFormatService } from "../ClogFormat/ClogFormatService";
 
 export class HomePanelService {
   /**
@@ -9,7 +10,7 @@ export class HomePanelService {
    * @returns 保存したファイル名
    * @throws Error 保存失敗時
    */
-  static saveMemo(text: string): string {
+  static async saveMemo(text: string): Promise<string> {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     const [firstWorkspace] = workspaceFolders ?? [];
     let rootPath: string | undefined = undefined;
@@ -35,9 +36,21 @@ export class HomePanelService {
       pad(now.getHours()) +
       pad(now.getMinutes()) +
       pad(now.getSeconds());
+
+    // markdown bodyをclog形式に変換
+    console.debug("[HomePanelService] saveMemo input text:", text);
+    const clogContent = await ClogFormatService.convertToClogFormat(text, dateStr);
+    console.debug("[HomePanelService] saveMemo generated dateStr:", dateStr);
+    console.debug("[HomePanelService] saveMemo final content to write:", clogContent);
+
     const fileName = dateStr + ".clog";
     const filePath = path.join(memoDir, fileName);
-    fs.writeFileSync(filePath, text, { encoding: "utf8" });
+    try {
+      fs.writeFileSync(filePath, clogContent, { encoding: "utf8" });
+    } catch (err) {
+      console.error(`[HomePanelService] Failed to write file: ${filePath}`, err);
+      throw err;
+    }
     return fileName;
   }
 
@@ -45,7 +58,7 @@ export class HomePanelService {
    * メモ一覧を取得
    * @returns メモ情報配列
    */
-  static getMemoList(): { fileName: string; date: string; content: string }[] {
+  static async getMemoList(): Promise<{ fileName: string; datetime: string; title: string; summary: string }[]> {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     const [firstWorkspace] = workspaceFolders ?? [];
     let rootPath: string | undefined = undefined;
@@ -72,21 +85,50 @@ export class HomePanelService {
     } catch (e) {
       files = [];
     }
-    // ファイル内容を取得
-    const memoList = files.map((file) => {
-      const filePath = path.join(memoDir, file);
-      let content = "";
-      try {
-        content = fs.readFileSync(filePath, { encoding: "utf8" });
-      } catch (e) {
-        // ignore
-      }
-      return {
-        fileName: file,
-        date: file.replace(".clog", ""),
-        content,
-      };
-    });
-    return memoList;
+    // ファイル内容を取得し、frontmatterをパースし、必要なフィールドが揃っているものだけ返す
+    const memoList = await Promise.all(
+      files.map(async (file) => {
+        const filePath = path.join(memoDir, file);
+        let content = "";
+        try {
+          content = fs.readFileSync(filePath, { encoding: "utf8" });
+        } catch (e) {
+          console.error(`[HomePanelService] Failed to read file: ${filePath}`, e);
+          return null;
+        }
+        const { frontmatter } = ClogFormatService.parseClogFile(content);
+        if (
+          !frontmatter ||
+          typeof frontmatter.created !== "string" ||
+          typeof frontmatter.title !== "string" ||
+          typeof frontmatter.summary !== "string" ||
+          !frontmatter.created ||
+          !frontmatter.title ||
+          !frontmatter.summary
+        ) {
+          console.warn(
+            `[HomePanelService] Skipping file due to invalid frontmatter: ${file} frontmatter=`,
+            frontmatter,
+          );
+          return null;
+        }
+        console.debug(
+          `[HomePanelService] Parsed memo: file=${file} created=${frontmatter.created} title=${frontmatter.title} summary=${frontmatter.summary}`,
+        );
+        return {
+          fileName: file,
+          datetime: frontmatter.created,
+          title: frontmatter.title,
+          summary: frontmatter.summary,
+        };
+      }),
+    );
+    // nullを除外
+    return memoList.filter((m) => m !== null) as {
+      fileName: string;
+      datetime: string;
+      title: string;
+      summary: string;
+    }[];
   }
 }

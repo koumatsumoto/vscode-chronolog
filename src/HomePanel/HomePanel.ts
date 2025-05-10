@@ -54,7 +54,7 @@ export class HomePanel {
             {
               const text: string = message.text;
               try {
-                const fileName = HomePanelService.saveMemo(text);
+                const fileName = await HomePanelService.saveMemo(text);
                 vscode.window.showInformationMessage(`メモを保存しました: ${fileName}`);
                 // パネルは閉じず、メモリストを再送信
                 this._sendMemoListToWebview();
@@ -75,8 +75,8 @@ export class HomePanel {
   /**
    * .clog/memo配下のメモファイル一覧を取得しWebviewに送信
    */
-  private _sendMemoListToWebview() {
-    const memoList = HomePanelService.getMemoList();
+  private async _sendMemoListToWebview() {
+    const memoList = await HomePanelService.getMemoList();
     this._panel.webview.postMessage({ command: "memoList", data: memoList });
   }
 

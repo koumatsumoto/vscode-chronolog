@@ -181,19 +181,28 @@ export class HomePanelView {
           });
 
           // メモ一覧描画
+          console.log("[Webview] before addEventListener: typeof renderMemoList =", typeof renderMemoList);
           window.addEventListener('message', event => {
+            console.log("[Webview] message event fired", event);
             const msg = event.data;
+            console.log("[Webview] typeof renderMemoList in event =", typeof renderMemoList);
             if (msg.command === 'memoList') {
               console.log("[Webview] received memoList", msg.data);
-              renderMemoList(msg.data);
+              try {
+                renderMemoList(msg.data);
+              } catch (e) {
+                console.error("[Webview] renderMemoList threw error:", e);
+              }
             }
             if (msg.command === 'clearMemoInput') {
               textarea.value = '';
               button.disabled = true;
             }
           });
+          console.log("[Webview] after addEventListener: typeof renderMemoList =", typeof renderMemoList);
 
           function renderMemoList(memos) {
+            console.log("[Webview] renderMemoList:", memos);
             memoListArea.innerHTML = '';
             if (!memos || memos.length === 0) {
               memoListEmpty.style.display = '';
@@ -201,27 +210,21 @@ export class HomePanelView {
             }
             memoListEmpty.style.display = 'none';
             for (const memo of memos) {
+              console.log("[Webview] memo item:", memo);
               const card = document.createElement('div');
               card.className = 'memo-card';
-              // タイトル抽出（1行目をタイトル、2行目以降を本文とする）
-              let title = '';
-              let body = '';
-              if (memo.content) {
-                const lines = memo.content.split(/\\r?\\n/);
-                title = lines[0] || '';
-                body = lines.slice(1).join(' ').trim();
-              }
-              // 日時表示
-              const dateStr = formatDate(memo.date);
+              // 新仕様: backendから渡されたtitle, summary, datetimeを使う
+              const dateStr = formatDate(memo.datetime ?? memo.date ?? "");
               card.innerHTML = \`
                 <div class="memo-date">\${dateStr}</div>
-                <div class="memo-title">\${title}</div>
-                <div class="memo-body">\${body}</div>
+                <div class="memo-title">\${memo.title ?? "(no title)"}</div>
+                <div class="memo-body">\${memo.summary ?? "(no content)"}</div>
               \`;
               memoListArea.appendChild(card);
             }
           }
 
+          // グローバルスコープに移動
           function formatDate(dateStr) {
             // 例: 20250510T105514 → 2025/05/10 10:55:14
             if (!dateStr) return '';
