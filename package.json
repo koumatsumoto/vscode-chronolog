@@ -50,7 +50,7 @@
     "compile-tests": "tsc -p . --outDir out",
     "fmt": "prettier -w .",
     "fmt:check": "prettier -c .",
-    "lint": "eslint src",
+    "lint": "eslint src --max-warnings=0",
     "package": "npm run check-types && npm run lint && node esbuild.js --production",
     "pretest": "npm run compile-tests && npm run compile",
     "test": "vscode-test",

@@ -282,7 +282,9 @@ export class ChronologHomePanel {
     this._panel.dispose();
     while (this._disposables.length) {
       const x = this._disposables.pop();
-      if (x) x.dispose();
+      if (x) {
+        x.dispose();
+      }
     }
   }
 }
