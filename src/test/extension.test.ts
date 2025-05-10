@@ -76,6 +76,16 @@ suite("Chronolog Extension Test Suite", () => {
     assert.doesNotMatch(html, /background:\s*#f8f8fa/);
   });
 
+  // HomePanelView の Ctrl+Enter保存機能テスト
+  test("HomePanelView.getHtml() should implement Ctrl+Enter save on textarea", () => {
+    const html = HomePanelView.getHtml();
+    assert.match(
+      html,
+      /textarea\.addEventListener\('keydown',\s*\(e\)\s*=>\s*{[^}]*e\.ctrlKey[^}]*e\.key\s*===\s*['"]Enter['"]/s,
+      "Ctrl+Enterによる保存イベントが実装されていない",
+    );
+  });
+
   // activationEvents テスト
   test("activationEvents should contain onCommand:chronolog.openHome", () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "../../package.json"), "utf8"));

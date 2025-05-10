@@ -162,6 +162,16 @@ export class HomePanelView {
           textarea.addEventListener('input', () => {
             button.disabled = textarea.value.trim().length === 0;
           });
+
+          // Ctrl+Enterで保存ボタンの動作を実行
+          textarea.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+              e.preventDefault();
+              if (!button.disabled) {
+                button.click();
+              }
+            }
+          });
           button.addEventListener('click', () => {
             const text = textarea.value.trim();
             if (text.length > 0) {
