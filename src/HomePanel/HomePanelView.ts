@@ -31,6 +31,7 @@ export class HomePanelView {
           .memo-list-area {
             flex: 1 1 50%;
             overflow-y: auto;
+            overflow-x: hidden;
             padding: 16px 20px 20px 20px;
             background: var(--vscode-editor-background);
           }
@@ -43,46 +44,55 @@ export class HomePanelView {
             resize: none;
             box-sizing: border-box;
             border-radius: 8px;
-            border: 1px solid var(--vscode-panel-border, #444);
+            border: none;
             padding: 12px;
-            background: color-mix(in srgb, var(--vscode-panel-background) 85%, #fff 15%);
-            /* fallback for color-mix */
-            /* background: rgba(255,255,255,0.07); */
-            color: var(--vscode-editor-foreground);
+            background: color-mix(in srgb, var(--vscode-panel-background) 100%, #111 30%);
+            color: color-mix(in srgb, var(--vscode-editor-foreground) 99%, #fff 1%);
             transition: background 0.2s;
+            outline: none;
+            position: relative;
+          }
+          textarea::placeholder {
+            color: color-mix(in srgb, var(--vscode-editor-foreground) 60%, #888 40%);
+            opacity: 1;
+          }
+          textarea:focus {
+            outline: none;
+            border: none;
           }
           @media (prefers-color-scheme: dark) {
             textarea {
-              background: color-mix(in srgb, var(--vscode-panel-background) 70%, #fff 30%);
-              /* fallback: background: #23272e; */
+              background: color-mix(in srgb, var(--vscode-panel-background) 100%, #fff 6%);
             }
           }
           .save-btn-float {
             position: absolute;
-            right: 12px;
-            bottom: 12px;
+            right: 16px;
+            bottom: 16px;
             font-size: 1em;
             padding: 8px 20px;
             border-radius: 6px;
             background: var(--vscode-button-background, #007acc);
             color: var(--vscode-button-foreground, #fff);
             border: none;
-            box-shadow: 0 2px 8px var(--vscode-widget-shadow, #0002);
+            box-shadow: 0 1px 2px var(--vscode-widget-shadow, #0001);
             cursor: pointer;
             transition: background 0.2s;
+            z-index: 2;
+            pointer-events: auto;
           }
           .save-btn-float:disabled {
             opacity: 0.6;
             cursor: not-allowed;
           }
           .memo-card {
-            background: color-mix(in srgb, var(--vscode-panel-background) 90%, #fff 10%);
-            /* fallback: background: #23272e; */
+            background: color-mix(in srgb, var(--vscode-panel-background) 100%, #fff 4%);
             box-shadow: 0 2px 8px var(--vscode-widget-shadow, #0002);
             border-radius: 8px;
             margin-bottom: 16px;
-            padding: 12px 16px;
-            width: 100%;
+            padding: 12px 12px;
+            width: calc(100% - 8px);
+            min-width: 0;
             min-height: 64px;
             display: flex;
             flex-direction: column;
@@ -92,7 +102,7 @@ export class HomePanelView {
           }
           @media (prefers-color-scheme: dark) {
             .memo-card {
-              background: color-mix(in srgb, var(--vscode-panel-background) 80%, #fff 20%);
+              background: color-mix(in srgb, var(--vscode-panel-background) 100%, #fff 4%);
             }
           }
           .memo-date {
@@ -107,11 +117,11 @@ export class HomePanelView {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: color-mix(in srgb, var(--vscode-editor-foreground) 60%, #888 0%);
           }
           .memo-body {
             font-size: 1em;
-            color: color-mix(in srgb, var(--vscode-editor-foreground) 70%, #000 30%);
-            /* fallback: color: #aaa; */
+            color: color-mix(in srgb, var(--vscode-editor-foreground) 40%, #000 30%);
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
@@ -128,8 +138,10 @@ export class HomePanelView {
       <body>
         <div class="container">
           <div class="input-area">
-            <textarea id="memoInput" placeholder="メモ内容を入力..."></textarea>
-            <button id="submitBtn" class="save-btn-float" disabled>保存</button>
+            <div style="position:relative; height:100%;">
+              <textarea id="memoInput" placeholder="メモ内容を入力..." style="height:100%;"></textarea>
+              <button id="submitBtn" class="save-btn-float" disabled>保存</button>
+            </div>
           </div>
           <div class="memo-list-area" id="memoListArea">
             <div class="memo-list-empty" id="memoListEmpty">過去のメモはありません</div>

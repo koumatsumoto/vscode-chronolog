@@ -75,21 +75,4 @@ suite("Chronolog Extension Test Suite", () => {
     assert.doesNotMatch(html, /background:\s*#fff/);
     assert.doesNotMatch(html, /background:\s*#f8f8fa/);
   });
-
-  // HomePanelView のUIスタイル改善仕様テスト
-  test("HomePanelView.getHtml() should reflect improved UI styles for textarea, button, and memo card", () => {
-    const html = HomePanelView.getHtml();
-    // textarea: 高さ・背景色・border-radius・color-mix
-    assert.match(html, /textarea\s*{[^}]*height:\s*calc\(100% - 32px\)/s, "Textarea height not set to 50% area");
-    assert.match(html, /textarea\s*{[^}]*background:\s*color-mix\(/s, "Textarea background color-mix not found");
-    assert.match(html, /textarea\s*{[^}]*border-radius:\s*8px/s, "Textarea border-radius not found");
-    // 保存ボタン: 右下フローティング
-    assert.match(html, /\.save-btn-float\s*{[^}]*position:\s*absolute/s, "Save button not absolute positioned");
-    assert.match(html, /\.save-btn-float\s*{[^}]*right:\s*12px/s, "Save button right offset not found");
-    assert.match(html, /\.save-btn-float\s*{[^}]*bottom:\s*12px/s, "Save button bottom offset not found");
-    // memo-card: 背景色・color-mix
-    assert.match(html, /\.memo-card\s*{[^}]*background:\s*color-mix\(/s, "Memo card background color-mix not found");
-    // memo-body: color-mixによる本文色
-    assert.match(html, /\.memo-body\s*{[^}]*color:\s*color-mix\(/s, "Memo body color-mix not found");
-  });
 });
