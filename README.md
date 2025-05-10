@@ -1,15 +1,15 @@
-# VS Code ChronoLog
+# VS Code Chronolog
 
-VS Code ChronoLog は、独自形式「ChronoLog (`.clog`)」で記述された時系列メモを VS Code 上で効率的に扱い、その内容をタイムラインとグラフで可視化する拡張機能です。
+VS Code Chronolog は、独自形式「Chronolog (`.clog`)」で記述された時系列メモを VS Code 上で効率的に扱い、その内容をタイムラインとグラフで可視化する拡張機能です。
 
 ## 概要
 
-- **名称:** VS Code ChronoLog
+- **名称:** VS Code Chronolog
 - **目的:** `.clog` ファイルで時系列メモを管理し、タイムライン・グラフで可視化
 - **ターゲットユーザー:** 調査記録、研究ノート、プロジェクトログ、思考メモなどを時系列で管理したい VS Code ユーザー
 - **開発言語:** TypeScript
 
-## ChronoLog (`.clog`) ファイル形式
+## Chronolog (`.clog`) ファイル形式
 
 - 拡張子: `.clog`
 - UTF-8 テキスト
@@ -38,7 +38,7 @@ VS Code ChronoLog は、独自形式「ChronoLog (`.clog`)」で記述された�
 ## 主な機能
 
 - `.clog` ファイルのシンタックスハイライト
-- コマンドパレットまたはエディタ右上アイコンから ChronoLog プレビューを開閉
+- コマンドパレットまたはエディタ右上アイコンから Chronolog プレビューを開閉
 - タイムライン表示（最新が上、古いものが下）
 - メモ間の関係性をグラフで可視化
 - プレビュー内でリンククリック、ノード詳細表示

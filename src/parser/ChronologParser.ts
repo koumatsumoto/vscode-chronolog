@@ -1,4 +1,6 @@
-// ChronoLog メモの構造を定義
+/**
+ * Chronolog メモの構造を定義
+ */
 export interface ChronologMemo {
   metadata: {
     topic?: string;
