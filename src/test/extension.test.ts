@@ -75,4 +75,13 @@ suite("Chronolog Extension Test Suite", () => {
     assert.doesNotMatch(html, /background:\s*#fff/);
     assert.doesNotMatch(html, /background:\s*#f8f8fa/);
   });
+
+  // activationEvents テスト
+  test("activationEvents should contain onCommand:chronolog.openHome", () => {
+    const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "../../package.json"), "utf8"));
+    assert.ok(
+      Array.isArray(pkg.activationEvents) && pkg.activationEvents.includes("onCommand:chronolog.openHome"),
+      "activationEvents does not contain onCommand:chronolog.openHome",
+    );
+  });
 });

@@ -20,6 +20,10 @@
 
 ## 2. 機能仕様 (初期リリース範囲)
 
+### 拡張機能の有効化条件
+
+- コマンド `Chronolog: Open Home`（chronolog.openHome）が呼び出されたときに拡張機能が有効化される（activationEvents: onCommand:chronolog.openHome）。
+
 ### 2.1. ワークスペース初期化機能
 
 - **トリガー:** VS Code でワークスペース (フォルダ) が開かれた際に自動実行。
