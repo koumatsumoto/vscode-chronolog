@@ -28,7 +28,7 @@ HomePanel の実装は以下の3ファイルに分割されています：
 
 ## ロギング機構
 
-拡張機能の主要なイベント処理・コマンド実行・activation などでは、`ChronologLogger` クラスを用いてログを出力する。  
+拡張機能の主要なイベント処理・コマンド実行・activation などでは、`Logger` クラスを用いてログを出力する。  
 ログは VSCode の OutputChannel に出力される。  
 ログレベルは `info`, `warn`, `error`, `debug`, `trace`, `log` を用途に応じて使い分ける。  
 ログ方針の詳細は [docs/development/logging-guidelines.md](../development/logging-guidelines.md) を参照。
@@ -38,7 +38,7 @@ HomePanel の実装は以下の3ファイルに分割されています：
 - 通常発生しない条件分岐やエラー処理は warn ログ
 - 内部関数や純粋関数には原則ログを残さない
 
-### ChronologLogger クラス仕様
+### Logger クラス仕様
 
 - VSCode の OutputChannel を利用し、静的メソッドでログ出力を行う
 - `initialize(outputChannel: OutputChannel)` で OutputChannel をセット

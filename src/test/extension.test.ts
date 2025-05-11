@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 import { HomePanel } from "../HomePanel/HomePanel";
 import { HomePanelService } from "../HomePanel/HomePanelService";
 import { HomePanelView } from "../HomePanel/HomePanelView";
-import { ChronologLogger } from "../ClogFormat/ChronologLogger";
+import { Logger } from "../Logger/Logger";
 
 suite("Chronolog Extension Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.");
@@ -96,21 +96,21 @@ suite("Chronolog Extension Test Suite", () => {
     );
   });
 
-  // ChronologLogger のログ出力テスト
-  test("ChronologLogger should output logs to OutputChannel", () => {
+  // Logger のログ出力テスト
+  test("Logger should output logs to OutputChannel", () => {
     const logs: string[] = [];
     const mockOutputChannel = {
       appendLine: (msg: string) => logs.push(msg),
     } as any;
 
-    ChronologLogger.initialize(mockOutputChannel);
+    Logger.initialize(mockOutputChannel);
 
-    ChronologLogger.info("info message");
-    ChronologLogger.warn("warn message");
-    ChronologLogger.error("error message");
-    ChronologLogger.debug("debug message");
-    ChronologLogger.trace("trace message");
-    ChronologLogger.log("log message");
+    Logger.info("info message");
+    Logger.warn("warn message");
+    Logger.error("error message");
+    Logger.debug("debug message");
+    Logger.trace("trace message");
+    Logger.log("log message");
 
     assert.deepStrictEqual(
       logs,
