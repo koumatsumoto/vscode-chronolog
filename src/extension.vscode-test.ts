@@ -3,12 +3,12 @@ import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 
-import { HomePanel } from "../HomePanel/HomePanel";
-import { HomePanelService } from "../HomePanel/HomePanelService";
-import { HomePanelView } from "../HomePanel/HomePanelView";
-import { Logger } from "../Logger/Logger";
+import { HomePanel } from "./HomePanel/HomePanel";
+import { HomePanelService } from "./HomePanel/HomePanelService";
+import { HomePanelView } from "./HomePanel/HomePanelView";
+import { Logger } from "./Logger/Logger";
 
-suite("Chronolog Extension Test Suite", () => {
+suite("Chronolog Extension VSCode-Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.");
 
   test("HomePanel class should be defined", () => {
@@ -89,7 +89,7 @@ suite("Chronolog Extension Test Suite", () => {
 
   // activationEvents テスト
   test("activationEvents should contain onCommand:chronolog.openHome", () => {
-    const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "../../package.json"), "utf8"));
+    const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
     assert.ok(
       Array.isArray(pkg.activationEvents) && pkg.activationEvents.includes("onCommand:chronolog.openHome"),
       "activationEvents does not contain onCommand:chronolog.openHome",
