@@ -6,6 +6,7 @@ import * as vscode from "vscode";
 import { HomePanel } from "../HomePanel/HomePanel";
 import { HomePanelService } from "../HomePanel/HomePanelService";
 import { HomePanelView } from "../HomePanel/HomePanelView";
+import { ChronologLogger } from "../ClogFormat/ChronologLogger";
 
 suite("Chronolog Extension Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.");
@@ -92,6 +93,36 @@ suite("Chronolog Extension Test Suite", () => {
     assert.ok(
       Array.isArray(pkg.activationEvents) && pkg.activationEvents.includes("onCommand:chronolog.openHome"),
       "activationEvents does not contain onCommand:chronolog.openHome",
+    );
+  });
+
+  // ChronologLogger のログ出力テスト
+  test("ChronologLogger should output logs to OutputChannel", () => {
+    const logs: string[] = [];
+    const mockOutputChannel = {
+      appendLine: (msg: string) => logs.push(msg),
+    } as any;
+
+    ChronologLogger.initialize(mockOutputChannel);
+
+    ChronologLogger.info("info message");
+    ChronologLogger.warn("warn message");
+    ChronologLogger.error("error message");
+    ChronologLogger.debug("debug message");
+    ChronologLogger.trace("trace message");
+    ChronologLogger.log("log message");
+
+    assert.deepStrictEqual(
+      logs,
+      [
+        "INFO: info message",
+        "WARN: warn message",
+        "ERROR: error message",
+        "DEBUG: debug message",
+        "TRACE: trace message",
+        "LOG: log message",
+      ],
+      "Logger output mismatch",
     );
   });
 });
