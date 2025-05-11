@@ -1,18 +1,7 @@
 // vite.config.mts
 import { defineConfig } from "vite";
-import { library } from "vite-plugin-lib";
-
 export default defineConfig({
-  plugins: [
-    ...library({
-      entry: "src/extension.ts",
-      formats: ["cjs"],
-      bundle: {
-        exclude: ["vscode", "fs", "path", "os", "crypto"],
-      },
-      cleanup: true,
-    }),
-  ],
+  plugins: [],
   build: {
     lib: {
       entry: "src/extension.ts",
@@ -23,7 +12,9 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       external: ["vscode", "fs", "path", "os", "crypto"],
-      output: {},
+      output: {
+        entryFileNames: "extension.js",
+      },
     },
     minify: process.env.NODE_ENV === "production",
     target: "node16",
