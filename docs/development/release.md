@@ -8,6 +8,12 @@
 npm version [patch|minor|major] -m "chore(release): publish version %s"
 ```
 
+v0.0.x 開発時のリリースコマンド
+
+```sh
+npm version patch -m "chore(release): publish version %s"
+```
+
 ## GitHub Actions による CI/CD 自動化
 
 - すべてのコミット・タグ push 時に GitHub Actions で CI（`npm run ci`）を実行する。
