@@ -33,6 +33,20 @@ npm run compile
 npm run package
 ```
 
+## テスト
+
+ユニットテストは [Vitest](https://vitest.dev/) を利用しています。  
+`*.test.ts` ファイルがテスト対象です。
+
+```bash
+npm run test
+```
+
+上記コマンドで以下が実行されます：
+
+- Vitest によるユニットテスト（`*.test.ts`）
+- VSCode 拡張の統合テスト（vscode-test）
+
 ## VS Code の推奨拡張機能
 
 以下の拡張機能をインストールすることで、開発効率が向上します：
