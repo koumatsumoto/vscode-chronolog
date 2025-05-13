@@ -21,13 +21,13 @@
 
 HomePanel の実装は以下の3ファイルに分割されています：
 
-- `HomePanel.ts`  
+- `panels/HomePanel.ts`  
   WebViewパネルの管理・コントローラー（UIイベントの受信、Service/View呼び出し）
 
-- `HomePanelService.ts`  
+- `panels/HomePanelService.ts`  
   ビジネスロジック（メモの保存・一覧取得などの処理。ファイル操作は Storage クラスに委譲）
 
-- `HomePanelView.ts`  
+- `panels/HomePanelView.ts`  
   HTML生成（入力パラメータからWebView用HTMLを組み立てて返す）
 
 この分割により、UI制御・ロジック・ビューの責務を明確化しています。

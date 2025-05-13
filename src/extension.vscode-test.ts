@@ -3,9 +3,9 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as vscode from "vscode";
 
-import { HomePanel } from "./HomePanel/HomePanel";
-import { HomePanelService } from "./HomePanel/HomePanelService";
-import { HomePanelView } from "./HomePanel/HomePanelView";
+import { HomePanel } from "./panels/HomePanel";
+import { HomePanelService } from "./panels/HomePanelService";
+import { HomePanelView } from "./panels/HomePanelView";
 import { Logger } from "./services/logger";
 
 suite("Chronolog Extension VSCode-Test Suite", () => {
