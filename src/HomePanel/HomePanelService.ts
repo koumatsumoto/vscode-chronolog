@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 import { ClogFormatService } from "../Domain/ClogFormatService";
+import { formatDateTime } from "../Domain/datetime";
 
 export class HomePanelService {
   /**
@@ -26,16 +27,7 @@ export class HomePanelService {
       fs.mkdirSync(memoDir, { recursive: true });
     }
     // 日時文字列生成
-    const now = new Date();
-    const pad = (n: number) => n.toString().padStart(2, "0");
-    const dateStr =
-      now.getFullYear().toString() +
-      pad(now.getMonth() + 1) +
-      pad(now.getDate()) +
-      "T" +
-      pad(now.getHours()) +
-      pad(now.getMinutes()) +
-      pad(now.getSeconds());
+    const dateStr = formatDateTime();
 
     // markdown bodyをclog形式に変換
     console.debug("[HomePanelService] saveMemo input text:", text);
