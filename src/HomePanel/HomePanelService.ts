@@ -1,5 +1,5 @@
-import * as fs from "fs";
 import * as path from "path";
+import { Storage } from "../services/storage";
 import * as vscode from "vscode";
 import { ClogFormatService } from "../Domain/ClogFormatService";
 import { formatDateTime } from "../Domain/datetime";
@@ -23,9 +23,7 @@ export class HomePanelService {
     }
     const memoDir = path.join(rootPath, ".clog", "memo");
     // ディレクトリがなければ作成
-    if (!fs.existsSync(memoDir)) {
-      fs.mkdirSync(memoDir, { recursive: true });
-    }
+    Storage.ensureDir(memoDir);
     // 日時文字列生成
     const dateStr = formatDateTime();
 
@@ -38,7 +36,7 @@ export class HomePanelService {
     const fileName = dateStr + ".clog";
     const filePath = path.join(memoDir, fileName);
     try {
-      fs.writeFileSync(filePath, clogContent, { encoding: "utf8" });
+      Storage.saveFile(filePath, clogContent);
     } catch (err) {
       console.error(`[HomePanelService] Failed to write file: ${filePath}`, err);
       throw err;
@@ -63,13 +61,11 @@ export class HomePanelService {
     const memoDir = path.join(rootPath, ".clog", "memo");
     let files: string[] = [];
     try {
-      files = fs
-        .readdirSync(memoDir)
-        .filter((f) => f.endsWith(".clog"))
+      files = Storage.listFiles(memoDir, ".clog")
         .map((f) => ({
           file: f,
           fullPath: path.join(memoDir, f),
-          mtime: fs.statSync(path.join(memoDir, f)).mtime.getTime(),
+          mtime: Storage.getMTime(path.join(memoDir, f)),
         }))
         .sort((a, b) => b.mtime - a.mtime)
         .slice(0, 10)
@@ -83,7 +79,7 @@ export class HomePanelService {
         const filePath = path.join(memoDir, file);
         let content = "";
         try {
-          content = fs.readFileSync(filePath, { encoding: "utf8" });
+          content = Storage.readFile(filePath);
         } catch (e) {
           console.error(`[HomePanelService] Failed to read file: ${filePath}`, e);
           return null;
