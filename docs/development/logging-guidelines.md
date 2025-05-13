@@ -12,7 +12,7 @@
 ## 実装例
 
 ```typescript
-import { Logger } from "./Logger/Logger";
+import { Logger } from "../../src/services/logger";
 
 // OutputChannel の生成と Logger 初期化
 const outputChannel = vscode.window.createOutputChannel("Chronolog");

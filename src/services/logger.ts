@@ -1,4 +1,4 @@
-// src/Logger/Logger.ts
+// src/services/logger.ts
 
 import type { OutputChannel } from "vscode";
 

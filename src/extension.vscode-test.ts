@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 import { HomePanel } from "./HomePanel/HomePanel";
 import { HomePanelService } from "./HomePanel/HomePanelService";
 import { HomePanelView } from "./HomePanel/HomePanelView";
-import { Logger } from "./Logger/Logger";
+import { Logger } from "./services/logger";
 
 suite("Chronolog Extension VSCode-Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.");

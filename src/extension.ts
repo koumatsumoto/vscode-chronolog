@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { HomePanel } from "./HomePanel/HomePanel";
-import { Logger } from "./Logger/Logger";
+import { Logger } from "./services/logger";
 import { Storage } from "./services/storage";
 
 /**
