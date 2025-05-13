@@ -1,5 +1,5 @@
 import * as yaml from "yaml";
-import * as crypto from "crypto";
+import * as crypto from "node:crypto";
 
 /**
  * clogファイル形式を扱うサービス
