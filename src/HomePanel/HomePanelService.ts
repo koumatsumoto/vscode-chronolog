@@ -1,4 +1,4 @@
-import * as path from "path";
+import * as path from "node:path";
 import { Storage } from "../services/storage";
 import * as vscode from "vscode";
 import { ClogFormatService } from "../Domain/ClogFormatService";

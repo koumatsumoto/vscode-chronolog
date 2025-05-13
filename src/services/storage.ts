@@ -1,5 +1,5 @@
 // Storage クラス: ファイル操作のユーティリティ
-import * as fs from "fs";
+import * as fs from "node:fs";
 
 export class Storage {
   /**
