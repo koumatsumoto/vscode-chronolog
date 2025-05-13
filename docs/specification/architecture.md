@@ -13,6 +13,12 @@
 
 ### HomePanel の実装構成（ファイル分割）
 
+#### WebViewメッセージハンドリングのエラーハンドリング仕様
+
+- `HomePanel.ts` の `onDidReceiveMessage` コールバックは `async` 関数として実装し、Promiseチェーンのcatch漏れによる未処理rejectionを防ぐ。
+- すべての非同期処理は `try/catch` でラップし、エラー発生時は `vscode.window.showErrorMessage` でユーザーに通知する。
+- これにより、拡張ホストでの「rejected promise not handled within 1 second」エラーを防止する。
+
 HomePanel の実装は以下の3ファイルに分割されています：
 
 - `HomePanel.ts`  

@@ -43,28 +43,34 @@ export class HomePanel {
     // Webviewからのメッセージ受信
     this._panel.webview.onDidReceiveMessage(
       async (message) => {
-        switch (message.command) {
-          case "alert":
-            vscode.window.showErrorMessage(message.text);
-            return;
-          case "requestMemoList":
-            this._sendMemoListToWebview();
-            return;
-          case "saveMemo":
-            {
-              const text: string = message.text;
-              try {
-                const fileName = await HomePanelService.saveMemo(text);
-                vscode.window.showInformationMessage(`メモを保存しました: ${fileName}`);
-                // パネルは閉じず、メモリストを再送信
-                this._sendMemoListToWebview();
-                // 入力欄クリア指示
-                this._panel.webview.postMessage({ command: "clearMemoInput" });
-              } catch (err) {
-                vscode.window.showErrorMessage("メモの保存に失敗しました: " + err);
+        try {
+          switch (message.command) {
+            case "alert":
+              vscode.window.showErrorMessage(message.text);
+              return;
+            case "requestMemoList":
+              await this._sendMemoListToWebview();
+              return;
+            case "saveMemo":
+              {
+                const text: string = message.text;
+                try {
+                  const fileName = await HomePanelService.saveMemo(text);
+                  vscode.window.showInformationMessage(`メモを保存しました: ${fileName}`);
+                  // パネルは閉じず、メモリストを再送信
+                  await this._sendMemoListToWebview();
+                  // 入力欄クリア指示
+                  this._panel.webview.postMessage({ command: "clearMemoInput" });
+                } catch (err) {
+                  vscode.window.showErrorMessage("メモの保存に失敗しました: " + err);
+                }
               }
-            }
-            return;
+              return;
+            default:
+              throw new Error(`Unknown command: ${message.command}`);
+          }
+        } catch (err) {
+          vscode.window.showErrorMessage("エラーが発生しました: " + err);
         }
       },
       null,
