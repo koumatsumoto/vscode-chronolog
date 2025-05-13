@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
-import { ClogFormatService } from "../ClogFormat/ClogFormatService";
+import { ClogFormatService } from "../Domain/ClogFormatService";
 
 export class HomePanelService {
   /**
