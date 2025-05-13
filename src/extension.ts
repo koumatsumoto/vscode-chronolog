@@ -2,9 +2,8 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { HomePanel } from "./HomePanel/HomePanel";
-import * as fs from "node:fs";
-import * as path from "node:path";
 import { Logger } from "./Logger/Logger";
+import { Storage } from "./services/storage";
 
 /**
  * This method is called when your extension is activated
@@ -22,23 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
   let rootPath: string | undefined = undefined;
   if (firstWorkspace) {
     rootPath = firstWorkspace.uri.fsPath;
-    const clogDir = path.join(rootPath, ".clog");
-    const memoDir = path.join(clogDir, "memo");
-
-    try {
-      // .clog フォルダ作成
-      if (!fs.existsSync(clogDir)) {
-        fs.mkdirSync(clogDir);
-        Logger.info(`Created directory: ${clogDir}`);
-      }
-      // .clog/memo フォルダ作成
-      if (!fs.existsSync(memoDir)) {
-        fs.mkdirSync(memoDir);
-        Logger.info(`Created directory: ${memoDir}`);
-      }
-    } catch (err) {
-      Logger.error(`Failed to initialize workspace directories: ${err}`);
-    }
+    Storage.initializeWorkspaceDirs(rootPath, Logger);
   } else {
     Logger.warn("No workspace folder found. .clog directory was not created.");
   }

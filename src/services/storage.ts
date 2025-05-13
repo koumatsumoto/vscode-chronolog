@@ -1,5 +1,6 @@
 // Storage クラス: ファイル操作のユーティリティ
 import * as fs from "node:fs";
+import * as path from "node:path";
 
 export class Storage {
   /**
@@ -54,5 +55,33 @@ export class Storage {
    */
   static getMTime(filePath: string): number {
     return fs.statSync(filePath).mtime.getTime();
+  }
+
+  /**
+   * ワークスペースの .clog/.clog/memo ディレクトリを初期化
+   * @param rootPath ワークスペースルートパス
+   * @param logger Loggerインスタンス (info, error メソッドを持つ)
+   */
+  static initializeWorkspaceDirs(
+    rootPath: string,
+    logger: { info: (msg: string) => void; error: (msg: string) => void },
+  ) {
+    const clogDir = path.join(rootPath, ".clog");
+    const memoDir = path.join(clogDir, "memo");
+
+    try {
+      // .clog フォルダ作成
+      if (!fs.existsSync(clogDir)) {
+        fs.mkdirSync(clogDir);
+        logger.info(`Created directory: ${clogDir}`);
+      }
+      // .clog/memo フォルダ作成
+      if (!fs.existsSync(memoDir)) {
+        fs.mkdirSync(memoDir);
+        logger.info(`Created directory: ${memoDir}`);
+      }
+    } catch (err) {
+      logger.error(`Failed to initialize workspace directories: ${err}`);
+    }
   }
 }

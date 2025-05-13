@@ -37,6 +37,7 @@ HomePanel の実装は以下の3ファイルに分割されています：
 - `services/storage.ts`  
   ファイル・ディレクトリの作成、保存、読み込み、一覧取得などの低レベルなストレージ操作を担当。  
   HomePanelService などから呼び出され、ビジネスロジック層からファイル操作を分離することで責務を明確化している。
+  また、ワークスペース初期化時に `.clog` および `.clog/memo` ディレクトリを作成する `initializeWorkspaceDirs(rootPath, logger)` メソッドも提供する。
 
 ## ロギング機構
 

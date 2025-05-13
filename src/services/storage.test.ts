@@ -12,6 +12,49 @@ describe("Storage", () => {
   beforeAll(() => {
     if (fs.existsSync(testDir)) {
       fs.rmSync(testDir, { recursive: true, force: true });
+
+      describe("Storage.initializeWorkspaceDirs", () => {
+        const wsDir = path.join(process.cwd(), "tmp_workspace_init");
+        const clogDir = path.join(wsDir, ".clog");
+        const memoDir = path.join(clogDir, "memo");
+
+        const logs: string[] = [];
+        const DummyLogger = {
+          info: (msg: string) => logs.push(`info:${msg}`),
+          error: (msg: string) => logs.push(`error:${msg}`),
+        };
+
+        beforeAll(() => {
+          if (fs.existsSync(wsDir)) {
+            fs.rmSync(wsDir, { recursive: true, force: true });
+          }
+          fs.mkdirSync(wsDir);
+          logs.length = 0;
+        });
+
+        afterAll(() => {
+          if (fs.existsSync(wsDir)) {
+            fs.rmSync(wsDir, { recursive: true, force: true });
+          }
+        });
+
+        it("should create .clog and .clog/memo directories", () => {
+          Storage.initializeWorkspaceDirs(wsDir, DummyLogger);
+          assert.ok(fs.existsSync(clogDir), ".clog directory was not created");
+          assert.ok(fs.existsSync(memoDir), ".clog/memo directory was not created");
+          assert.ok(
+            logs.some((l) => l.includes("Created directory:")),
+            "Logger.info not called for directory creation",
+          );
+        });
+
+        it("should not throw if directories already exist", () => {
+          // 2回目呼び出しで例外が出ないこと
+          assert.doesNotThrow(() => {
+            Storage.initializeWorkspaceDirs(wsDir, DummyLogger);
+          });
+        });
+      });
     }
   });
 
