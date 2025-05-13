@@ -73,6 +73,14 @@ Markdown形式で書かれたコンテンツ...
 3. bodyコンテンツを抽出する（2番目の `---` の後の空行以降すべて）
 4. bodyコンテンツをMarkdownパーサーで処理する
 
+実装例（TypeScript）:
+
+```ts
+import { parseClogFile } from "../../src/core/clog";
+// content: string = clogファイルの内容
+const { frontmatter, body } = parseClogFile(content);
+```
+
 この2段階のパース方法により、アプリケーションは構造化されたメタデータとフォーマットされたコンテンツの両方を扱うことができます。
 
 ## 例

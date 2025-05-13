@@ -1,7 +1,7 @@
 import * as path from "node:path";
 import { Storage } from "../services/storage";
 import * as vscode from "vscode";
-import { ClogFormatService } from "../core/ClogFormatService";
+import { convertToClogFormat, parseClogFile } from "../core/clog";
 import { formatDateTime } from "../core/datetime";
 
 export class HomePanelService {
@@ -29,7 +29,7 @@ export class HomePanelService {
 
     // markdown bodyをclog形式に変換
     console.debug("[HomePanelService] saveMemo input text:", text);
-    const clogContent = await ClogFormatService.convertToClogFormat(text, dateStr);
+    const clogContent = await convertToClogFormat(text, dateStr);
     console.debug("[HomePanelService] saveMemo generated dateStr:", dateStr);
     console.debug("[HomePanelService] saveMemo final content to write:", clogContent);
 
@@ -84,7 +84,7 @@ export class HomePanelService {
           console.error(`[HomePanelService] Failed to read file: ${filePath}`, e);
           return null;
         }
-        const { frontmatter } = ClogFormatService.parseClogFile(content);
+        const { frontmatter } = parseClogFile(content);
         if (
           !frontmatter ||
           typeof frontmatter.created !== "string" ||
