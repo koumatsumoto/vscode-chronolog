@@ -3,9 +3,9 @@ import { describe, it, beforeAll, afterAll } from "vitest";
 import * as assert from "assert";
 import * as path from "node:path";
 import * as fs from "node:fs";
-import { Storage } from "./storage";
+import { DataStorage } from "./storage";
 
-describe("Storage", () => {
+describe("DataStorage", () => {
   const testDir = path.join(process.cwd(), "tmp_storage_test");
   const testFile = path.join(testDir, "test.txt");
 
@@ -13,7 +13,7 @@ describe("Storage", () => {
     if (fs.existsSync(testDir)) {
       fs.rmSync(testDir, { recursive: true, force: true });
 
-      describe("Storage.initializeWorkspaceDirs", () => {
+      describe("DataStorage.initializeWorkspaceDirs", () => {
         const wsDir = path.join(process.cwd(), "tmp_workspace_init");
         const clogDir = path.join(wsDir, ".clog");
         const memoDir = path.join(clogDir, "memo");
@@ -39,7 +39,7 @@ describe("Storage", () => {
         });
 
         it("should create .clog and .clog/memo directories", () => {
-          Storage.initializeWorkspaceDirs(wsDir, DummyLogger);
+          DataStorage.initializeWorkspaceDirs(wsDir, DummyLogger);
           assert.ok(fs.existsSync(clogDir), ".clog directory was not created");
           assert.ok(fs.existsSync(memoDir), ".clog/memo directory was not created");
           assert.ok(
@@ -51,7 +51,7 @@ describe("Storage", () => {
         it("should not throw if directories already exist", () => {
           // 2回目呼び出しで例外が出ないこと
           assert.doesNotThrow(() => {
-            Storage.initializeWorkspaceDirs(wsDir, DummyLogger);
+            DataStorage.initializeWorkspaceDirs(wsDir, DummyLogger);
           });
         });
       });
@@ -64,28 +64,17 @@ describe("Storage", () => {
     }
   });
 
-  it("should create directory if not exists", () => {
-    Storage.ensureDir(testDir);
-    assert.ok(fs.existsSync(testDir), "Directory was not created");
-  });
-
-  it("should save and read file", () => {
+  it("should save and read memo file", () => {
     const content = "hello storage";
-    Storage.saveFile(testFile, content);
-    assert.ok(fs.existsSync(testFile), "File was not created");
-    const read = Storage.readFile(testFile);
+    DataStorage.saveMemo(testDir, "test.txt", content);
+    assert.ok(fs.existsSync(path.join(testDir, ".clog", "memo", "test.txt")), "File was not created");
+    const read = DataStorage.readMemo(testDir, "test.txt");
     assert.strictEqual(read, content, "File content mismatch");
   });
 
-  it("should list files with extension", () => {
-    const files = Storage.listFiles(testDir, ".txt");
-    assert.ok(Array.isArray(files), "listFiles did not return array");
-    assert.ok(files.includes("test.txt"), "test.txt not found in listFiles");
-  });
-
-  it("should get file mtime", () => {
-    const mtime = Storage.getMTime(testFile);
-    assert.strictEqual(typeof mtime, "number");
-    assert.ok(mtime > 0, "mtime should be positive");
+  it("should list latest memo files", () => {
+    const files = DataStorage.listLatestMemoFiles(testDir, 10);
+    assert.ok(Array.isArray(files), "listLatestMemoFiles did not return array");
+    assert.ok(files.includes("test.txt"), "test.txt not found in listLatestMemoFiles");
   });
 });

@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import { HomePanel } from "./panels/HomePanel";
 import { Logger } from "./services/logger";
-import { Storage } from "./services/storage";
+import { DataStorage } from "./services/storage";
 import { ChronologSidebarViewProvider } from "./panels/ChronologSidebarViewProvider";
 
 /**
@@ -22,7 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
   let rootPath: string | undefined = undefined;
   if (firstWorkspace) {
     rootPath = firstWorkspace.uri.fsPath;
-    Storage.initializeWorkspaceDirs(rootPath, Logger);
+    DataStorage.initializeWorkspaceDirs(rootPath, Logger);
   } else {
     Logger.warn("No workspace folder found. .clog directory was not created.");
   }

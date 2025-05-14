@@ -35,9 +35,24 @@ HomePanel の実装は以下の3ファイルに分割されています：
 #### ファイル操作責務の分離
 
 - `services/storage.ts`  
-  ファイル・ディレクトリの作成、保存、読み込み、一覧取得などの低レベルなストレージ操作を担当。  
-  HomePanelService などから呼び出され、ビジネスロジック層からファイル操作を分離することで責務を明確化している。
+  DataStorage クラスが、ファイル・ディレクトリの作成、保存、読み込み、一覧取得などの低レベルなストレージ操作を担当する。  
+  利用側はフォルダ名やファイル構造を意識せず、メモ一覧取得やメモ保存などのデータ操作を行うことができる。
+  具体的には「最新10件のメモファイル一覧(string[])を取得」「メモを保存」などのAPIを提供し、データの物理配置やファイル操作の詳細はこのクラスが隠蔽する。
   また、ワークスペース初期化時に `.clog` および `.clog/memo` ディレクトリを作成する `initializeWorkspaceDirs(rootPath, logger)` メソッドも提供する。
+
+#### DataStorage クラスの主なAPI
+
+- `initializeWorkspaceDirs(rootPath, logger)`  
+  .clog/.clog/memoディレクトリの初期化
+
+- `saveMemo(rootPath, fileName, content)`  
+  メモファイルの保存
+
+- `readMemo(rootPath, fileName)`  
+  メモファイルの内容取得
+
+- `listLatestMemoFiles(rootPath, limit=10)`  
+  最新のメモファイル名リスト取得（新しい順）
 
 ## ロギング機構
 

@@ -1,5 +1,4 @@
-import * as path from "node:path";
-import { Storage } from "../services/storage";
+import { DataStorage } from "../services/storage";
 import * as vscode from "vscode";
 import { convertToClogFormat, parseClogFile } from "../core/clog";
 import { formatDateTime } from "../core/datetime";
@@ -21,9 +20,6 @@ export class HomePanelService {
     if (!rootPath) {
       throw new Error("ワークスペースが開かれていません。");
     }
-    const memoDir = path.join(rootPath, ".clog", "memo");
-    // ディレクトリがなければ作成
-    Storage.ensureDir(memoDir);
     // 日時文字列生成
     const dateStr = formatDateTime();
 
@@ -34,11 +30,10 @@ export class HomePanelService {
     console.debug("[HomePanelService] saveMemo final content to write:", clogContent);
 
     const fileName = dateStr + ".clog";
-    const filePath = path.join(memoDir, fileName);
     try {
-      Storage.saveFile(filePath, clogContent);
+      DataStorage.saveMemo(rootPath, fileName, clogContent);
     } catch (err) {
-      console.error(`[HomePanelService] Failed to write file: ${filePath}`, err);
+      console.error(`[HomePanelService] Failed to write file: ${fileName}`, err);
       throw err;
     }
     return fileName;
@@ -58,24 +53,20 @@ export class HomePanelService {
     if (!rootPath) {
       return [];
     }
-    const memoDir = path.join(rootPath, ".clog", "memo");
     let files: string[] = [];
     try {
-      files = Storage.listFiles(memoDir, ".clog")
-        .sort((a, b) => b.localeCompare(a))
-        .slice(0, 10);
+      files = DataStorage.listLatestMemoFiles(rootPath, 10);
     } catch (e) {
       files = [];
     }
     // ファイル内容を取得し、frontmatterをパースし、必要なフィールドが揃っているものだけ返す
     const memoList = await Promise.all(
       files.map(async (file) => {
-        const filePath = path.join(memoDir, file);
         let content = "";
         try {
-          content = Storage.readFile(filePath);
+          content = DataStorage.readMemo(rootPath, file);
         } catch (e) {
-          console.error(`[HomePanelService] Failed to read file: ${filePath}`, e);
+          console.error(`[HomePanelService] Failed to read file: ${file}`, e);
           return null;
         }
         const { frontmatter } = parseClogFile(content);

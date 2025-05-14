@@ -1,62 +1,14 @@
-// Storage クラス: ファイル操作のユーティリティ
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-export class Storage {
-  /**
-   * ディレクトリがなければ作成
-   * @param dirPath ディレクトリパス
-   */
-  static ensureDir(dirPath: string) {
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
-    }
-  }
-
-  /**
-   * ファイルを保存
-   * @param filePath 保存先ファイルパス
-   * @param content 保存内容
-   */
-  static saveFile(filePath: string, content: string) {
-    fs.writeFileSync(filePath, content, { encoding: "utf8" });
-  }
-
-  /**
-   * ファイルを読み込み
-   * @param filePath ファイルパス
-   * @returns ファイル内容
-   */
-  static readFile(filePath: string): string {
-    return fs.readFileSync(filePath, { encoding: "utf8" });
-  }
-
-  /**
-   * ディレクトリ内のファイル一覧取得
-   * @param dirPath ディレクトリパス
-   * @param ext 拡張子フィルタ（例: ".clog"）
-   * @returns ファイル名配列
-   */
-  static listFiles(dirPath: string, ext?: string): string[] {
-    if (!fs.existsSync(dirPath)) {
-      return [];
-    }
-    let files = fs.readdirSync(dirPath);
-    if (ext) {
-      files = files.filter((f) => f.endsWith(ext));
-    }
-    return files;
-  }
-
-  /**
-   * ファイルの更新日時取得
-   * @param filePath ファイルパス
-   * @returns 更新日時 (number, ms)
-   */
-  static getMTime(filePath: string): number {
-    return fs.statSync(filePath).mtime.getTime();
-  }
-
+/**
+ * DataStorage クラス
+ *
+ * 利用側はフォルダ名やファイル構造を意識せず、メモ一覧取得やメモ保存などのデータ操作を行うことができる。
+ * 具体的には「最新10件のメモファイル一覧(string[])を取得」「メモを保存」などのAPIを提供する。
+ * データの物理配置やファイル操作の詳細はこのクラスが隠蔽する。
+ */
+export class DataStorage {
   /**
    * ワークスペースの .clog/.clog/memo ディレクトリを初期化
    * @param rootPath ワークスペースルートパス
@@ -70,12 +22,10 @@ export class Storage {
     const memoDir = path.join(clogDir, "memo");
 
     try {
-      // .clog フォルダ作成
       if (!fs.existsSync(clogDir)) {
         fs.mkdirSync(clogDir);
         logger.info(`Created directory: ${clogDir}`);
       }
-      // .clog/memo フォルダ作成
       if (!fs.existsSync(memoDir)) {
         fs.mkdirSync(memoDir);
         logger.info(`Created directory: ${memoDir}`);
@@ -83,5 +33,49 @@ export class Storage {
     } catch (err) {
       logger.error(`Failed to initialize workspace directories: ${err}`);
     }
+  }
+
+  /**
+   * メモを保存する
+   * @param rootPath ワークスペースルートパス
+   * @param fileName 保存するファイル名（例: 20240514T220000.clog）
+   * @param content 保存内容
+   */
+  static saveMemo(rootPath: string, fileName: string, content: string) {
+    const memoDir = path.join(rootPath, ".clog", "memo");
+    if (!fs.existsSync(memoDir)) {
+      fs.mkdirSync(memoDir, { recursive: true });
+    }
+    const filePath = path.join(memoDir, fileName);
+    fs.writeFileSync(filePath, content, { encoding: "utf8" });
+  }
+
+  /**
+   * メモファイルの内容を取得する
+   * @param rootPath ワークスペースルートパス
+   * @param fileName ファイル名
+   * @returns ファイル内容
+   */
+  static readMemo(rootPath: string, fileName: string): string {
+    const memoDir = path.join(rootPath, ".clog", "memo");
+    const filePath = path.join(memoDir, fileName);
+    return fs.readFileSync(filePath, { encoding: "utf8" });
+  }
+
+  /**
+   * 最新のメモファイル名リストを取得する
+   * @param rootPath ワークスペースルートパス
+   * @param limit 取得件数（デフォルト10件）
+   * @returns ファイル名配列（新しい順）
+   */
+  static listLatestMemoFiles(rootPath: string, limit: number = 10): string[] {
+    const memoDir = path.join(rootPath, ".clog", "memo");
+    if (!fs.existsSync(memoDir)) {
+      return [];
+    }
+    let files = fs.readdirSync(memoDir);
+    files = files.filter((f) => f.endsWith(".clog"));
+    files = files.sort((a, b) => b.localeCompare(a)).slice(0, limit);
+    return files;
   }
 }
