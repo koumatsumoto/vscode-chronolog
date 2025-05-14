@@ -59,8 +59,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       ChronologSidebarViewProvider.viewType,
-      new ChronologSidebarViewProvider(context, Logger)
-    )
+      new ChronologSidebarViewProvider(context, Logger),
+    ),
   );
 }
 

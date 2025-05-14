@@ -62,14 +62,8 @@ export class HomePanelService {
     let files: string[] = [];
     try {
       files = Storage.listFiles(memoDir, ".clog")
-        .map((f) => ({
-          file: f,
-          fullPath: path.join(memoDir, f),
-          mtime: Storage.getMTime(path.join(memoDir, f)),
-        }))
-        .sort((a, b) => b.mtime - a.mtime)
-        .slice(0, 10)
-        .map((f) => f.file);
+        .sort((a, b) => b.localeCompare(a))
+        .slice(0, 10);
     } catch (e) {
       files = [];
     }

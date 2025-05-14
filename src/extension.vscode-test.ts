@@ -67,6 +67,41 @@ suite("Chronolog Extension VSCode-Test Suite", () => {
     fs.unlinkSync(testFile);
   });
 
+  // 追加: getMemoListはファイル名降順で最大10件返すことを検証
+  test("HomePanelService.getMemoList should return up to 10 memos in descending filename order", async function () {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    const [firstWorkspace] = workspaceFolders ?? [];
+    if (!firstWorkspace) {
+      this.skip();
+    }
+    const rootPath = firstWorkspace.uri.fsPath;
+    const memoDir = path.join(rootPath, ".clog", "memo");
+    // 11個のダミーファイルをISO8601形式で作成
+    const base = "2099-01-01T00:00:00";
+    const files: string[] = [];
+    for (let i = 0; i < 11; i++) {
+      const date = new Date(Date.parse(base) + i * 60000); // 1分ずつずらす
+      const iso = date.toISOString().replace(/:/g, "-").slice(0, 16);
+      const fname = `${iso}.clog`;
+      const fpath = path.join(memoDir, fname);
+      const content = `---\ncreated: ${iso}\ntitle: test${i}\nsummary: sum${i}\n---\nbody${i}`;
+      fs.writeFileSync(fpath, content, { encoding: "utf8" });
+      files.push(fname);
+    }
+    // 並び替え期待値
+    const expected = [...files].sort((a, b) => b.localeCompare(a)).slice(0, 10);
+    const memoList = await HomePanelService.getMemoList();
+    const actual = memoList.map((m) => m.fileName);
+    assert.deepStrictEqual(actual, expected, "getMemoList did not return 10 newest memos in filename-desc order");
+    // 後始末
+    for (const file of files) {
+      const filePath = path.join(memoDir, file);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+  });
+
   // HomePanelView の Webview テーマ対応テスト
   test("HomePanelView.getHtml() should use VSCode theme CSS variables", () => {
     const html = HomePanelView.getHtml();
