@@ -16,7 +16,8 @@
   ],
   "main": "./dist/extension.js",
   "activationEvents": [
-    "onCommand:chronolog.openHome"
+    "onCommand:chronolog.openHome",
+    "onView:chronolog-sidebar-view"
   ],
   "contributes": {
     "languages": [
@@ -37,7 +38,25 @@
         "command": "chronolog.openHome",
         "title": "Chronolog: Open Home"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "chronolog-sidebar",
+          "title": "Chronolog",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "chronolog-sidebar": [
+        {
+          "id": "chronolog-sidebar-view",
+          "name": "Chronolog",
+          "type": "webview"
+        }
+      ]
+    }
   },
   "scripts": {
     "ci": "npm run fmt:check && npm run test",

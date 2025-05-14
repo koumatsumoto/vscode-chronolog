@@ -37,3 +37,10 @@
 ## ショートカットキー
 
 - メモ入力欄でCtrl+Enterを押すと、保存ボタンを押した時と同じ動作（メモ保存）が行われる。
+
+## Chronolog サイドバー仕様
+
+- VS Code のサイドバー（アクティビティバー）に Chronolog アイコン（media/icon.svg）を追加する。
+- サイドバーの Chronolog アイコンを押すと、Chronolog カスタムビューが表示される。
+- カスタムビュー内に「Chronolog Home を開く」ボタンを表示し、押下で `chronolog.openHome` コマンドが実行され、Homeパネルが開く。
+- アイコンはプロジェクト内の media/icon.svg を使用する。

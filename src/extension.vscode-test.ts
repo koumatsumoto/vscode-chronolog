@@ -96,6 +96,16 @@ suite("Chronolog Extension VSCode-Test Suite", () => {
     );
   });
 
+  // Chronolog サイドバーの contributes.views 設定テスト
+  test("Chronolog sidebar should be contributed as a custom view", () => {
+    const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
+    const views = pkg.contributes?.views?.["chronolog-sidebar"];
+    assert.ok(Array.isArray(views), "chronolog-sidebar views is not defined");
+    const chronologView = views.find((v: any) => v.id === "chronolog-sidebar-view");
+    assert.ok(chronologView, "chronolog-sidebar-view is not defined");
+    assert.strictEqual(chronologView.name, "Chronolog", "chronolog-sidebar-view name should be 'Chronolog'");
+  });
+
   // Logger のログ出力テスト
   test("Logger should output logs to OutputChannel", () => {
     const logs: string[] = [];

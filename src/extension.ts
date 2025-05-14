@@ -4,6 +4,7 @@ import * as vscode from "vscode";
 import { HomePanel } from "./panels/HomePanel";
 import { Logger } from "./services/logger";
 import { Storage } from "./services/storage";
+import { ChronologSidebarViewProvider } from "./panels/ChronologSidebarViewProvider";
 
 /**
  * This method is called when your extension is activated
@@ -53,6 +54,14 @@ export function activate(context: vscode.ExtensionContext) {
     HomePanel.createOrShow(context.extensionUri);
   });
   context.subscriptions.push(openHomeCommand);
+
+  // Chronolog: サイドバー WebviewViewProvider 登録
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(
+      ChronologSidebarViewProvider.viewType,
+      new ChronologSidebarViewProvider(context, Logger)
+    )
+  );
 }
 
 /**
