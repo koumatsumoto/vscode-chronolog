@@ -1,4 +1,4 @@
-import * as fs from "node:fs";
+import { promises as fs } from "node:fs";
 import * as path from "node:path";
 
 /**
@@ -10,26 +10,39 @@ import * as path from "node:path";
  */
 export class DataStorage {
   /**
+   * .clog/memo ディレクトリのパスを取得
+   */
+  private static getMemoDir(rootPath: string): string {
+    return path.join(rootPath, ".clog", "memo");
+  }
+
+  /**
+   * .clog/memo ディレクトリを作成（存在しなければ）
+   */
+  private static async ensureMemoDir(rootPath: string): Promise<void> {
+    const memoDir = this.getMemoDir(rootPath);
+    try {
+      await fs.mkdir(memoDir, { recursive: true });
+    } catch (err) {
+      // 既に存在している場合は無視
+      if ((err as NodeJS.ErrnoException).code !== "EEXIST") {
+        throw err;
+      }
+    }
+  }
+
+  /**
    * ワークスペースの .clog/.clog/memo ディレクトリを初期化
    * @param rootPath ワークスペースルートパス
    * @param logger Loggerインスタンス (info, error メソッドを持つ)
    */
-  static initializeWorkspaceDirs(
+  static async initializeWorkspaceDirs(
     rootPath: string,
     logger: { info: (msg: string) => void; error: (msg: string) => void },
-  ) {
-    const clogDir = path.join(rootPath, ".clog");
-    const memoDir = path.join(clogDir, "memo");
-
+  ): Promise<void> {
     try {
-      if (!fs.existsSync(clogDir)) {
-        fs.mkdirSync(clogDir);
-        logger.info(`Created directory: ${clogDir}`);
-      }
-      if (!fs.existsSync(memoDir)) {
-        fs.mkdirSync(memoDir);
-        logger.info(`Created directory: ${memoDir}`);
-      }
+      await this.ensureMemoDir(rootPath);
+      logger.info(`Ensured directory: ${this.getMemoDir(rootPath)}`);
     } catch (err) {
       logger.error(`Failed to initialize workspace directories: ${err}`);
     }
@@ -41,13 +54,10 @@ export class DataStorage {
    * @param fileName 保存するファイル名（例: 20240514T220000.clog）
    * @param content 保存内容
    */
-  static saveMemo(rootPath: string, fileName: string, content: string) {
-    const memoDir = path.join(rootPath, ".clog", "memo");
-    if (!fs.existsSync(memoDir)) {
-      fs.mkdirSync(memoDir, { recursive: true });
-    }
-    const filePath = path.join(memoDir, fileName);
-    fs.writeFileSync(filePath, content, { encoding: "utf8" });
+  static async saveMemo(rootPath: string, fileName: string, content: string): Promise<void> {
+    await this.ensureMemoDir(rootPath);
+    const filePath = path.join(this.getMemoDir(rootPath), fileName);
+    await fs.writeFile(filePath, content, { encoding: "utf8" });
   }
 
   /**
@@ -56,26 +66,35 @@ export class DataStorage {
    * @param fileName ファイル名
    * @returns ファイル内容
    */
-  static readMemo(rootPath: string, fileName: string): string {
-    const memoDir = path.join(rootPath, ".clog", "memo");
-    const filePath = path.join(memoDir, fileName);
-    return fs.readFileSync(filePath, { encoding: "utf8" });
+  static async readMemo(rootPath: string, fileName: string): Promise<string> {
+    const filePath = path.join(this.getMemoDir(rootPath), fileName);
+    return await fs.readFile(filePath, { encoding: "utf8" });
   }
 
   /**
-   * 最新のメモファイル名リストを取得する
+   * 最新のメモファイル内容リストを取得する
    * @param rootPath ワークスペースルートパス
    * @param limit 取得件数（デフォルト10件）
-   * @returns ファイル名配列（新しい順）
+   * @returns ファイル内容配列（新しい順）
    */
-  static listLatestMemoFiles(rootPath: string, limit: number = 10): string[] {
-    const memoDir = path.join(rootPath, ".clog", "memo");
-    if (!fs.existsSync(memoDir)) {
-      return [];
+  static async listLatestMemoFiles(rootPath: string, limit: number = 10): Promise<string[]> {
+    const memoDir = this.getMemoDir(rootPath);
+    try {
+      const files = (await fs.readdir(memoDir))
+        .filter((f) => f.endsWith(".clog"))
+        .sort((a, b) => b.localeCompare(a))
+        .slice(0, limit);
+
+      const contents = await Promise.all(
+        files.map((file) => fs.readFile(path.join(memoDir, file), { encoding: "utf8" })),
+      );
+      return contents;
+    } catch (err) {
+      // ディレクトリが存在しない場合など
+      if ((err as NodeJS.ErrnoException).code === "ENOENT") {
+        return [];
+      }
+      throw err;
     }
-    let files = fs.readdirSync(memoDir);
-    files = files.filter((f) => f.endsWith(".clog"));
-    files = files.sort((a, b) => b.localeCompare(a)).slice(0, limit);
-    return files;
   }
 }

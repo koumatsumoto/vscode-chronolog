@@ -31,7 +31,7 @@ export class HomePanelService {
 
     const fileName = dateStr + ".clog";
     try {
-      DataStorage.saveMemo(rootPath, fileName, clogContent);
+      await DataStorage.saveMemo(rootPath, fileName, clogContent);
     } catch (err) {
       console.error(`[HomePanelService] Failed to write file: ${fileName}`, err);
       throw err;
@@ -53,22 +53,15 @@ export class HomePanelService {
     if (!rootPath) {
       return [];
     }
-    let files: string[] = [];
+    let contents: string[] = [];
     try {
-      files = DataStorage.listLatestMemoFiles(rootPath, 10);
+      contents = await DataStorage.listLatestMemoFiles(rootPath, 10);
     } catch (e) {
-      files = [];
+      contents = [];
     }
-    // ファイル内容を取得し、frontmatterをパースし、必要なフィールドが揃っているものだけ返す
-    const memoList = await Promise.all(
-      files.map(async (file) => {
-        let content = "";
-        try {
-          content = DataStorage.readMemo(rootPath, file);
-        } catch (e) {
-          console.error(`[HomePanelService] Failed to read file: ${file}`, e);
-          return null;
-        }
+    // ファイル内容からfrontmatterをパースし、必要なフィールドが揃っているものだけ返す
+    const memoList = contents
+      .map((content) => {
         const { frontmatter } = parseClogFile(content);
         if (
           !frontmatter ||
@@ -79,29 +72,25 @@ export class HomePanelService {
           !frontmatter.title ||
           !frontmatter.summary
         ) {
-          console.warn(
-            `[HomePanelService] Skipping file due to invalid frontmatter: ${file} frontmatter=`,
-            frontmatter,
-          );
+          console.warn(`[HomePanelService] Skipping memo due to invalid frontmatter:`, frontmatter);
           return null;
         }
         console.debug(
-          `[HomePanelService] Parsed memo: file=${file} created=${frontmatter.created} title=${frontmatter.title} summary=${frontmatter.summary}`,
+          `[HomePanelService] Parsed memo: created=${frontmatter.created} title=${frontmatter.title} summary=${frontmatter.summary}`,
         );
         return {
-          fileName: file,
+          fileName: "", // ファイル名は取得できないため空文字
           datetime: frontmatter.created,
           title: frontmatter.title,
           summary: frontmatter.summary,
         };
-      }),
-    );
-    // nullを除外
-    return memoList.filter((m) => m !== null) as {
+      })
+      .filter((m) => m !== null) as {
       fileName: string;
       datetime: string;
       title: string;
       summary: string;
     }[];
+    return memoList;
   }
 }

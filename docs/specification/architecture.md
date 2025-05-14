@@ -42,17 +42,17 @@ HomePanel の実装は以下の3ファイルに分割されています：
 
 #### DataStorage クラスの主なAPI
 
-- `initializeWorkspaceDirs(rootPath, logger)`  
-  .clog/.clog/memoディレクトリの初期化
+- `initializeWorkspaceDirs(rootPath, logger): Promise<void>`  
+  .clog/.clog/memoディレクトリの初期化（非同期）
 
-- `saveMemo(rootPath, fileName, content)`  
-  メモファイルの保存
+- `saveMemo(rootPath, fileName, content): Promise<void>`  
+  メモファイルの保存（非同期）
 
-- `readMemo(rootPath, fileName)`  
-  メモファイルの内容取得
+- `readMemo(rootPath, fileName): Promise<string>`  
+  メモファイルの内容取得（非同期）
 
-- `listLatestMemoFiles(rootPath, limit=10)`  
-  最新のメモファイル名リスト取得（新しい順）
+- `listLatestMemoFiles(rootPath, limit=10): Promise<string[]>`  
+  最新のメモファイル内容リスト取得（新しい順、ファイル名配列ではなくファイル内容配列を返す、非同期）
 
 ## ロギング機構
 
