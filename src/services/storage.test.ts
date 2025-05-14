@@ -7,9 +7,15 @@ import { DataStorage } from "./storage";
 
 describe("DataStorage", () => {
   const testDir = path.join(process.cwd(), "tmp_storage_test");
-  const testFile = path.join(testDir, "test.txt");
 
   beforeAll(() => {
+    if (fs.existsSync(testDir)) {
+      fs.rmSync(testDir, { recursive: true, force: true });
+    }
+    fs.mkdirSync(testDir, { recursive: true });
+  });
+
+  afterAll(() => {
     if (fs.existsSync(testDir)) {
       fs.rmSync(testDir, { recursive: true, force: true });
 
@@ -58,23 +64,17 @@ describe("DataStorage", () => {
     }
   });
 
-  afterAll(() => {
-    if (fs.existsSync(testDir)) {
-      fs.rmSync(testDir, { recursive: true, force: true });
-    }
-  });
-
   it("should save and read memo file", () => {
     const content = "hello storage";
-    DataStorage.saveMemo(testDir, "test.txt", content);
-    assert.ok(fs.existsSync(path.join(testDir, ".clog", "memo", "test.txt")), "File was not created");
-    const read = DataStorage.readMemo(testDir, "test.txt");
+    DataStorage.saveMemo(testDir, "test.clog", content);
+    assert.ok(fs.existsSync(path.join(testDir, ".clog", "memo", "test.clog")), "File was not created");
+    const read = DataStorage.readMemo(testDir, "test.clog");
     assert.strictEqual(read, content, "File content mismatch");
   });
 
   it("should list latest memo files", () => {
     const files = DataStorage.listLatestMemoFiles(testDir, 10);
     assert.ok(Array.isArray(files), "listLatestMemoFiles did not return array");
-    assert.ok(files.includes("test.txt"), "test.txt not found in listLatestMemoFiles");
+    assert.ok(files.includes("test.clog"), "test.clog not found in listLatestMemoFiles");
   });
 });
