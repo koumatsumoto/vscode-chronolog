@@ -11,7 +11,7 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: true,
     rollupOptions: {
-      external: ["vscode", "node:fs", "node:path", "node:os", "node:crypto"],
+      external: ["vscode", /^node:.*/],
       output: {
         entryFileNames: "extension.js",
       },
