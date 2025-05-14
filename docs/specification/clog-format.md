@@ -47,7 +47,7 @@ Markdown形式で書かれたコンテンツ...
 - 有効なYAML形式である必要がある
 - ドキュメントに関するメタデータを含む
 - 必須フィールド：
-  - `id`: 文字列（空でない）
+  - `id`: ファイル名（拡張子を除く）と同じISO8601形式の日時文字列（例: 20250511T082117）
   - `title`: 文字列（空でない）
   - `created`: ISO8601形式の日時文字列（YYYYMMDDThhmmss）
 
@@ -87,7 +87,7 @@ const { frontmatter, body } = parseClogFile(content);
 
 ```
 ---
-id: doc-001
+id: 20250510T123000
 title: サンプルドキュメント
 created: 20250510T123000
 author: 山田太郎

@@ -25,7 +25,7 @@ export class HomePanelService {
 
     // markdown bodyをclog形式に変換
     console.debug("[HomePanelService] saveMemo input text:", text);
-    const clogContent = await convertToClogFormat(text, dateStr);
+    const clogContent = await convertToClogFormat(text, dateStr, dateStr);
     console.debug("[HomePanelService] saveMemo generated dateStr:", dateStr);
     console.debug("[HomePanelService] saveMemo final content to write:", clogContent);
 

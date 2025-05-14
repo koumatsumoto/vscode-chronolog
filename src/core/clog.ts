@@ -1,5 +1,4 @@
 import * as yaml from "yaml";
-import * as crypto from "node:crypto";
 
 /**
  * clogファイルをパースしてfrontmatterとbodyを返す
@@ -124,17 +123,18 @@ export async function extractSummaryFromMarkdown(markdownContent: string): Promi
 
 /**
  * フロントマターを生成する
+ * @param id ファイル名（拡張子除く、ISO8601形式の文字列）
  * @param title タイトル
  * @param created 作成日時（ISO8601形式の文字列 YYYYMMDDThhmmss）
  * @param summary サマリー
  * @returns YAMLフロントマター
  */
-export function generateFrontmatter(title: string, created: string, summary: string): string {
-  if (!title || !created || !summary) {
-    console.warn("[clog] generateFrontmatter: missing field(s)", { title, created, summary });
+export function generateFrontmatter(id: string, title: string, created: string, summary: string): string {
+  if (!id || !title || !created || !summary) {
+    console.warn("[clog] generateFrontmatter: missing field(s)", { id, title, created, summary });
   }
   const frontmatterObj = {
-    id: crypto.randomUUID(),
+    id: id && id.trim() ? id : "00000000T000000",
     title: title && title.trim() ? title : "タイトルなし",
     created: created && created.trim() ? created : "00000000T000000",
     summary: summary && summary.trim() ? summary : "(no content)",
@@ -147,14 +147,15 @@ export function generateFrontmatter(title: string, created: string, summary: str
 /**
  * MarkdownコンテンツをClog形式に変換する
  * @param markdownContent Markdown形式のコンテンツ
+ * @param id ファイル名（拡張子除く、ISO8601形式の文字列）
  * @param created 作成日時（ISO8601形式の文字列 YYYYMMDDThhmmss）
  * @returns Clog形式のコンテンツ
  */
-export async function convertToClogFormat(markdownContent: string, created: string): Promise<string> {
+export async function convertToClogFormat(markdownContent: string, id: string, created: string): Promise<string> {
   try {
     const title = await extractTitleFromMarkdown(markdownContent);
     const summary = await extractSummaryFromMarkdown(markdownContent);
-    const frontmatter = generateFrontmatter(title, created, summary);
+    const frontmatter = generateFrontmatter(id, title, created, summary);
 
     const result = `---\n${frontmatter}---\n\n${markdownContent}`;
     console.debug("[clog] convertToClogFormat result:", result);

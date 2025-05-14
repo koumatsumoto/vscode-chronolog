@@ -21,20 +21,50 @@ describe("DataStorage", () => {
   });
 
   it("should save and read memo file", async () => {
-    const content = "hello storage";
-    await DataStorage.saveMemo(testDir, "test.clog", content);
-    assert.ok(fs.existsSync(path.join(testDir, ".clog", "memo", "test.clog")), "File was not created");
-    const read = await DataStorage.readMemo(testDir, "test.clog");
+    const fileName = "20250510T123000.clog";
+    const content = [
+      "---",
+      "id: 20250510T123000",
+      "title: テストメモ",
+      "created: 20250510T123000",
+      "---",
+      "",
+      "テスト本文",
+    ].join("\n");
+    await DataStorage.saveMemo(testDir, fileName, content);
+    assert.ok(fs.existsSync(path.join(testDir, ".clog", "memo", fileName)), "File was not created");
+    const read = await DataStorage.readMemo(testDir, fileName);
     assert.strictEqual(read, content, "File content mismatch");
+    // idがファイル名と一致するか確認
+    const idLine = read.split("\n").find((l) => l.startsWith("id:"));
+    assert.strictEqual(idLine, "id: 20250510T123000", "id does not match file name");
   });
 
   it("should list latest memo files (returns content array)", async () => {
-    const content = "hello storage";
-    await DataStorage.saveMemo(testDir, "test2.clog", content + "2");
+    const content1 = [
+      "---",
+      "id: 20250510T123000",
+      "title: テストメモ",
+      "created: 20250510T123000",
+      "---",
+      "",
+      "テスト本文",
+    ].join("\n");
+    const content2 = [
+      "---",
+      "id: 20250510T123001",
+      "title: テストメモ2",
+      "created: 20250510T123001",
+      "---",
+      "",
+      "テスト本文2",
+    ].join("\n");
+    await DataStorage.saveMemo(testDir, "20250510T123000.clog", content1);
+    await DataStorage.saveMemo(testDir, "20250510T123001.clog", content2);
     const files = await DataStorage.listLatestMemoFiles(testDir, 10);
     assert.ok(Array.isArray(files), "listLatestMemoFiles did not return array");
-    assert.ok(files.includes("hello storage"), "Content of test.clog not found in listLatestMemoFiles");
-    assert.ok(files.includes("hello storage2"), "Content of test2.clog not found in listLatestMemoFiles");
+    assert.ok(files.includes(content1), "Content of 20250510T123000.clog not found in listLatestMemoFiles");
+    assert.ok(files.includes(content2), "Content of 20250510T123001.clog not found in listLatestMemoFiles");
   });
 });
 
