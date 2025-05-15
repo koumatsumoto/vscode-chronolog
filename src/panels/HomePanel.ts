@@ -54,8 +54,9 @@ export class HomePanel {
             case "saveMemo":
               {
                 const text: string = message.text;
+                const id: string | undefined = message.id;
                 try {
-                  const fileName = await HomePanelService.saveMemo(text);
+                  const fileName = await HomePanelService.saveMemo(text, id);
                   vscode.window.showInformationMessage(`メモを保存しました: ${fileName}`);
                   // パネルは閉じず、メモリストを再送信
                   await this._sendMemoListToWebview();
@@ -63,6 +64,20 @@ export class HomePanel {
                   this._panel.webview.postMessage({ command: "clearMemoInput" });
                 } catch (err) {
                   vscode.window.showErrorMessage("メモの保存に失敗しました: " + err);
+                }
+              }
+              return;
+            case "selectMemo":
+              {
+                const id: string = message.id;
+                try {
+                  const memo = await HomePanelService.getMemoById(id);
+                  console.debug("[HomePanel] selectMemo: getMemoById result:", memo);
+                  if (memo && memo.content) {
+                    this._panel.webview.postMessage({ command: "setMemoInput", text: memo.content, id });
+                  }
+                } catch (err) {
+                  vscode.window.showErrorMessage("メモの取得に失敗しました: " + err);
                 }
               }
               return;

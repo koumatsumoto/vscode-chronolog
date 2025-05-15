@@ -163,6 +163,9 @@ export class HomePanelView {
             button.disabled = textarea.value.trim().length === 0;
           });
 
+          // 現在選択中のメモIDを保持
+          let selectedMemoId = null;
+
           // Ctrl+Enterで保存ボタンの動作を実行
           textarea.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key === 'Enter') {
@@ -175,8 +178,12 @@ export class HomePanelView {
           button.addEventListener('click', () => {
             const text = textarea.value.trim();
             if (text.length > 0) {
-              console.log("[Webview] postMessage: saveMemo", text);
-              window.vscodeApi.postMessage({ command: 'saveMemo', text });
+              console.log("[Webview] postMessage: saveMemo", text, selectedMemoId);
+              window.vscodeApi.postMessage(
+                selectedMemoId
+                  ? { command: 'saveMemo', text, id: selectedMemoId }
+                  : { command: 'saveMemo', text }
+              );
             }
           });
 
@@ -197,6 +204,13 @@ export class HomePanelView {
             if (msg.command === 'clearMemoInput') {
               textarea.value = '';
               button.disabled = true;
+              selectedMemoId = null;
+            }
+            if (msg.command === 'setMemoInput') {
+              textarea.value = msg.text ?? '';
+              button.disabled = textarea.value.trim().length === 0;
+              // 編集モード: 選択中IDをセット
+              selectedMemoId = msg.id ?? null;
             }
           });
           console.log("[Webview] after addEventListener: typeof renderMemoList =", typeof renderMemoList);
@@ -209,19 +223,35 @@ export class HomePanelView {
               return;
             }
             memoListEmpty.style.display = 'none';
-            for (const memo of memos) {
-              console.log("[Webview] memo item:", memo);
-              const card = document.createElement('div');
-              card.className = 'memo-card';
-              // 新仕様: backendから渡されたtitle, summary, datetimeを使う
-              const dateStr = formatDate(memo.datetime ?? memo.date ?? "");
-              card.innerHTML = \`
-                <div class="memo-date">\${dateStr}</div>
-                <div class="memo-title">\${memo.title ?? "(no title)"}</div>
-                <div class="memo-body">\${memo.summary ?? "(no content)"}</div>
-              \`;
-              memoListArea.appendChild(card);
-            }
+for (const memo of memos) {
+  console.log("[Webview] memo item:", memo);
+  const card = document.createElement('div');
+  card.className = 'memo-card';
+  card.dataset.memoId = memo.id ?? memo.datetime ?? memo.date ?? "";
+  // 新仕様: backendから渡されたtitle, summary, datetimeを使う
+  const dateStr = formatDate(memo.datetime ?? memo.date ?? "");
+  card.innerHTML = \`
+    <div class="memo-date">\${dateStr}</div>
+    <div class="memo-title">\${memo.title ?? "(no title)"}</div>
+    <div class="memo-body">\${memo.summary ?? "(no content)"}</div>
+  \`;
+  card.addEventListener('click', async (e) => {
+    // textareaに未保存内容があれば保存
+    const currentText = textarea.value.trim();
+    if (currentText.length > 0 && !button.disabled) {
+      // 保存要求
+      await window.vscodeApi.postMessage(
+        selectedMemoId
+          ? { command: 'saveMemo', text: currentText, id: selectedMemoId }
+          : { command: 'saveMemo', text: currentText }
+      );
+    }
+    // メモIDを拡張側に通知
+    selectedMemoId = card.dataset.memoId;
+    window.vscodeApi.postMessage({ command: 'selectMemo', id: card.dataset.memoId });
+  });
+  memoListArea.appendChild(card);
+}
           }
 
           // グローバルスコープに移動

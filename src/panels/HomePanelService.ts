@@ -1,6 +1,12 @@
 import { DataStorage } from "../services/storage";
 import * as vscode from "vscode";
-import { convertToClogFormat, parseClogFile } from "../core/clog";
+import {
+  convertToClogFormat,
+  parseClogFile,
+  extractTitleFromMarkdown,
+  extractSummaryFromMarkdown,
+  generateFrontmatter,
+} from "../core/clog";
 import { formatDateTime } from "../core/datetime";
 
 export class HomePanelService {
@@ -10,33 +16,87 @@ export class HomePanelService {
    * @returns 保存したファイル名
    * @throws Error 保存失敗時
    */
-  static async saveMemo(text: string): Promise<string> {
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-    const [firstWorkspace] = workspaceFolders ?? [];
-    let rootPath: string | undefined = undefined;
-    if (firstWorkspace) {
-      rootPath = firstWorkspace.uri.fsPath;
+  static async saveMemo(text: string, id?: string, optRootPath?: string): Promise<string> {
+    let rootPath: string | undefined = optRootPath;
+    if (!rootPath) {
+      const workspaceFolders = vscode.workspace.workspaceFolders;
+      const [firstWorkspace] = workspaceFolders ?? [];
+      if (firstWorkspace) {
+        rootPath = firstWorkspace.uri.fsPath;
+      }
     }
     if (!rootPath) {
       throw new Error("ワークスペースが開かれていません。");
     }
-    // 日時文字列生成
-    const dateStr = formatDateTime();
 
-    // markdown bodyをclog形式に変換
-    console.debug("[HomePanelService] saveMemo input text:", text);
-    const clogContent = await convertToClogFormat(text, dateStr, dateStr);
-    console.debug("[HomePanelService] saveMemo generated dateStr:", dateStr);
-    console.debug("[HomePanelService] saveMemo final content to write:", clogContent);
+    // 新規保存
+    if (!id) {
+      const dateStr = formatDateTime();
+      const clogContent = await convertToClogFormat(text, dateStr, dateStr);
+      const fileName = dateStr + ".clog";
+      try {
+        await DataStorage.saveMemo(rootPath, fileName, clogContent);
+      } catch (err) {
+        console.error(`[HomePanelService] Failed to write file: ${fileName}`, err);
+        throw err;
+      }
+      return fileName;
+    }
 
-    const fileName = dateStr + ".clog";
+    // 既存メモ更新: frontmatter再利用、bodyのみ差し替え
+    const fileName = id + ".clog";
+    let frontmatter: any = {};
+    let created = id;
     try {
-      await DataStorage.saveMemo(rootPath, fileName, clogContent);
+      const oldContent = await DataStorage.readMemo(rootPath, fileName);
+      const { frontmatter: oldFm } = parseClogFile(oldContent);
+      frontmatter = oldFm || {};
+      created = frontmatter.created || id;
+    } catch (e) {
+      // ファイルがない場合は新規扱い
+      frontmatter = {};
+      created = id;
+    }
+    // タイトル・サマリーは新しい内容から再抽出
+    const title = await extractTitleFromMarkdown(text);
+    const summary = await extractSummaryFromMarkdown(text);
+    const newFrontmatter = generateFrontmatter(id, title, created, summary);
+    const newContent = `---\n${newFrontmatter}---\n\n${text}`;
+    try {
+      await DataStorage.saveMemo(rootPath, fileName, newContent);
     } catch (err) {
       console.error(`[HomePanelService] Failed to write file: ${fileName}`, err);
       throw err;
     }
     return fileName;
+  }
+
+  /**
+   * メモIDから内容を取得
+   * @param id メモID（日時形式）
+   * @returns メモ内容
+   */
+  static async getMemoById(id: string, optRootPath?: string): Promise<{ content: string }> {
+    let rootPath: string | undefined = optRootPath;
+    if (!rootPath) {
+      const workspaceFolders = vscode.workspace.workspaceFolders;
+      const [firstWorkspace] = workspaceFolders ?? [];
+      if (firstWorkspace) {
+        rootPath = firstWorkspace.uri.fsPath;
+      }
+    }
+    if (!rootPath) {
+      throw new Error("ワークスペースが開かれていません。");
+    }
+    const fileName = id + ".clog";
+    try {
+      const fileContent = await DataStorage.readMemo(rootPath, fileName);
+      const { body } = parseClogFile(fileContent);
+      return { content: body };
+    } catch (err) {
+      console.error(`[HomePanelService] Failed to load memo: ${fileName}`, err);
+      throw err;
+    }
   }
 
   /**
