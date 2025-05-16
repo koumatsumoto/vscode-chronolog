@@ -44,4 +44,5 @@
 - サイドバーの Chronolog アイコンを押すと、Chronolog カスタムビューが表示される。
 - カスタムビュー内に「Open Home」ボタンを表示し、押下で `chronolog.openHome` コマンドが実行され、Homeパネルが開く。
 - 「Delete All Memos」ボタンを表示し、押下時に window.confirm で確認ダイアログを表示し、同意した場合は保存済みメモ履歴を全て削除する。
+- 「Open Home」または「Delete All Memos」ボタン押下後は、Chronolog サイドバーの Webview を即座にリフレッシュし、UI・イベントリスナーが常に正常動作するようにする。
 - アイコンはプロジェクト内の media/icon.svg を使用する。

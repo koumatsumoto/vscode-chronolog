@@ -5,6 +5,8 @@ export class ChronologSidebarViewProvider implements vscode.WebviewViewProvider 
   public static readonly viewType = "chronolog-sidebar-view";
   private logger: typeof Logger;
 
+  private _view?: vscode.WebviewView;
+
   constructor(_context: vscode.ExtensionContext, logger: typeof Logger) {
     this.logger = logger;
     this.logger.info("ChronologSidebarViewProvider: constructor called");
@@ -16,6 +18,7 @@ export class ChronologSidebarViewProvider implements vscode.WebviewViewProvider 
     _token: vscode.CancellationToken,
   ) {
     this.logger.info("ChronologSidebarViewProvider: resolveWebviewView called");
+    this._view = webviewView;
     webviewView.webview.options = {
       enableScripts: true,
     };
@@ -37,9 +40,17 @@ export class ChronologSidebarViewProvider implements vscode.WebviewViewProvider 
     });
   }
 
+  public refresh() {
+    if (this._view) {
+      this._view.webview.html = this.getHtml();
+      this.logger.info("ChronologSidebarViewProvider: webview refreshed");
+    }
+  }
+
   private getHtml(): string {
     this.logger.info("ChronologSidebarViewProvider: getHtml called");
-    // シンプルなボタンUI
+    const timestamp = new Date().toLocaleString();
+    // シンプルなボタンUI＋描画時刻
     return /* html */ `
       <!DOCTYPE html>
       <html lang="ja">
@@ -67,6 +78,12 @@ export class ChronologSidebarViewProvider implements vscode.WebviewViewProvider 
           button:hover {
             background: var(--vscode-button-hoverBackground);
           }
+          .timestamp {
+            margin-top: 24px;
+            font-size: 10px;
+            color: #888;
+            text-align: right;
+          }
         </style>
       </head>
       <body>
@@ -74,6 +91,7 @@ export class ChronologSidebarViewProvider implements vscode.WebviewViewProvider 
         <button id="deleteAllBtn" style="margin-top: 12px; background: #d32f2f; color: var(--vscode-button-foreground);">
           Delete All Memos
         </button>
+        <div class="timestamp">rendered: ${timestamp}</div>
         <script>
           document.getElementById('openHomeBtn').addEventListener('click', () => {
             window.acquireVsCodeApi().postMessage({ command: 'openHome' });

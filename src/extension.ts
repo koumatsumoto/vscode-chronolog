@@ -48,10 +48,17 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
+  // Chronolog: サイドバー WebviewViewProvider インスタンス生成・登録
+  const sidebarProvider = new ChronologSidebarViewProvider(context, Logger);
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(ChronologSidebarViewProvider.viewType, sidebarProvider),
+  );
+
   // Chronolog: ホームパネル表示コマンド
   const openHomeCommand = vscode.commands.registerCommand("chronolog.openHome", () => {
     Logger.info("Command 'chronolog.openHome' executed.");
     HomePanel.createOrShow(context.extensionUri);
+    sidebarProvider.refresh();
   });
   context.subscriptions.push(openHomeCommand);
 
@@ -65,6 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
         await DataStorage.deleteAllMemos(rootPath);
         Logger.info("All memos deleted successfully.");
         vscode.window.showInformationMessage("All memos have been deleted.");
+        sidebarProvider.refresh();
       } catch (err) {
         Logger.error("Failed to delete memos: " + err);
         vscode.window.showErrorMessage("Failed to delete memos: " + err);
@@ -74,14 +82,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
   context.subscriptions.push(deleteAllMemosCommand);
-
-  // Chronolog: サイドバー WebviewViewProvider 登録
-  context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider(
-      ChronologSidebarViewProvider.viewType,
-      new ChronologSidebarViewProvider(context, Logger),
-    ),
-  );
 }
 
 /**
