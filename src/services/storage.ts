@@ -17,6 +17,23 @@ export class DataStorage {
   }
 
   /**
+   * .clog/memo ディレクトリ配下の全メモファイルを削除する
+   * @param rootPath ワークスペースルートパス
+   */
+  static async deleteAllMemos(rootPath: string): Promise<void> {
+    const memoDir = this.getMemoDir(rootPath);
+    try {
+      const files = await fs.readdir(memoDir);
+      await Promise.all(files.filter((f) => f.endsWith(".clog")).map((file) => fs.unlink(path.join(memoDir, file))));
+    } catch (err) {
+      // ディレクトリが存在しない場合などは無視
+      if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
+        throw err;
+      }
+    }
+  }
+
+  /**
    * .clog/memo ディレクトリを作成（存在しなければ）
    */
   private static async ensureMemoDir(rootPath: string): Promise<void> {

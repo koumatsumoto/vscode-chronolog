@@ -17,6 +17,7 @@
   "main": "./dist/extension.js",
   "activationEvents": [
     "onCommand:chronolog.openHome",
+    "onCommand:chronolog.deleteAllMemos",
     "onView:chronolog-sidebar-view"
   ],
   "contributes": {
@@ -37,6 +38,10 @@
       {
         "command": "chronolog.openHome",
         "title": "Chronolog: Open Home"
+      },
+      {
+        "command": "chronolog.deleteAllMemos",
+        "title": "Chronolog: Delete All Memos"
       }
     ],
     "viewsContainers": {

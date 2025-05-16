@@ -66,6 +66,19 @@ describe("DataStorage", () => {
     assert.ok(files.includes(content1), "Content of 20250510T123000.clog not found in listLatestMemoFiles");
     assert.ok(files.includes(content2), "Content of 20250510T123001.clog not found in listLatestMemoFiles");
   });
+
+  it("should delete all memo files", async () => {
+    // 2件保存
+    const content1 = "---\nid: 20250510T999000\ntitle: 削除テスト1\ncreated: 20250510T999000\n---\n\ntest1";
+    const content2 = "---\nid: 20250510T999001\ntitle: 削除テスト2\ncreated: 20250510T999001\n---\n\ntest2";
+    await DataStorage.saveMemo(testDir, "20250510T999000.clog", content1);
+    await DataStorage.saveMemo(testDir, "20250510T999001.clog", content2);
+    // 削除
+    await DataStorage.deleteAllMemos(testDir);
+    const memoDir = path.join(testDir, ".clog", "memo");
+    const files = fs.existsSync(memoDir) ? fs.readdirSync(memoDir).filter((f) => f.endsWith(".clog")) : [];
+    assert.strictEqual(files.length, 0, "All memo files should be deleted");
+  });
 });
 
 describe("DataStorage.initializeWorkspaceDirs", () => {

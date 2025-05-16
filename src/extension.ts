@@ -55,6 +55,26 @@ export function activate(context: vscode.ExtensionContext) {
   });
   context.subscriptions.push(openHomeCommand);
 
+  // Chronolog: Delete All Memos コマンド登録
+  const deleteAllMemosCommand = vscode.commands.registerCommand("chronolog.deleteAllMemos", async () => {
+    Logger.info("Command 'chronolog.deleteAllMemos' executed.");
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    const rootPath = workspaceFolders?.[0]?.uri?.fsPath;
+    if (rootPath) {
+      try {
+        await DataStorage.deleteAllMemos(rootPath);
+        Logger.info("All memos deleted successfully.");
+        vscode.window.showInformationMessage("All memos have been deleted.");
+      } catch (err) {
+        Logger.error("Failed to delete memos: " + err);
+        vscode.window.showErrorMessage("Failed to delete memos: " + err);
+      }
+    } else {
+      vscode.window.showErrorMessage("No workspace folder found.");
+    }
+  });
+  context.subscriptions.push(deleteAllMemosCommand);
+
   // Chronolog: サイドバー WebviewViewProvider 登録
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(

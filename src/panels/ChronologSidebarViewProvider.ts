@@ -30,6 +30,10 @@ export class ChronologSidebarViewProvider implements vscode.WebviewViewProvider 
         this.logger.info("ChronologSidebarViewProvider: executing chronolog.openHome command");
         vscode.commands.executeCommand("chronolog.openHome");
       }
+      if (message.command === "deleteAllMemos") {
+        this.logger.info("ChronologSidebarViewProvider: executing deleteAllMemos");
+        vscode.commands.executeCommand("chronolog.deleteAllMemos");
+      }
     });
   }
 
@@ -41,6 +45,7 @@ export class ChronologSidebarViewProvider implements vscode.WebviewViewProvider 
       <html lang="ja">
       <head>
         <meta charset="UTF-8" />
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
         <style>
           body {
             margin: 0;
@@ -65,10 +70,16 @@ export class ChronologSidebarViewProvider implements vscode.WebviewViewProvider 
         </style>
       </head>
       <body>
-        <button id="openHomeBtn">Open Chronolog Home</button>
+        <button id="openHomeBtn">Open Home</button>
+        <button id="deleteAllBtn" style="margin-top: 12px; background: #d32f2f; color: var(--vscode-button-foreground);">
+          Delete All Memos
+        </button>
         <script>
           document.getElementById('openHomeBtn').addEventListener('click', () => {
             window.acquireVsCodeApi().postMessage({ command: 'openHome' });
+          });
+          document.getElementById('deleteAllBtn').addEventListener('click', () => {
+            window.acquireVsCodeApi().postMessage({ command: 'deleteAllMemos' });
           });
         </script>
       </body>

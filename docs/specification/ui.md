@@ -42,5 +42,6 @@
 
 - VS Code のサイドバー（アクティビティバー）に Chronolog アイコン（media/icon.svg）を追加する。
 - サイドバーの Chronolog アイコンを押すと、Chronolog カスタムビューが表示される。
-- カスタムビュー内に「Chronolog Home を開く」ボタンを表示し、押下で `chronolog.openHome` コマンドが実行され、Homeパネルが開く。
+- カスタムビュー内に「Open Home」ボタンを表示し、押下で `chronolog.openHome` コマンドが実行され、Homeパネルが開く。
+- 「Delete All Memos」ボタンを表示し、押下時に window.confirm で確認ダイアログを表示し、同意した場合は保存済みメモ履歴を全て削除する。
 - アイコンはプロジェクト内の media/icon.svg を使用する。
